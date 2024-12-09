@@ -117,7 +117,7 @@ namespace MediaTekDocuments.controller
 
         #region Commandes de livres et Dvd
         /// <summary>
-        /// Récupère les commandes d'une livre
+        /// Récupère les commandes d'un livre
         /// </summary>
         /// <param name="idLivre">id du livre concernée</param>
         /// <returns></returns>

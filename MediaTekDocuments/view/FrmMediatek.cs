@@ -1323,6 +1323,123 @@ namespace MediaTekDocuments.view
             dgvLivresComListe.Columns["titre"].DisplayIndex = 1;
         }
 
-        #endregion
+        private void button4_Click(object sender, EventArgs e)
+        {
+            RemplirCmdLivresListeComplete();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RemplirCmdLivresListeComplete();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            RemplirCmdLivresListeComplete();
+        }
+
+        private void txtCommandeLivresRecherche_TextChanged(object sender, EventArgs e)
+        {
+            if (!txtCommandeLivresRecherche.Text.Equals(""))
+            {
+                cbxLivresComGenres.SelectedIndex = -1;
+                cbxLivresComRayons.SelectedIndex = -1;
+                cbxLivresComPublics.SelectedIndex = -1;
+                txtNumDoc.Text = "";
+                List<Livre> lesLivresParTitre;
+                lesLivresParTitre = lesLivres.FindAll(x => x.Titre.ToLower().Contains(txtCommandeLivresRecherche.Text.ToLower()));
+                RemplirCmdLivresListe(lesLivresParTitre);
+            }
+            else
+            {
+                // si la zone de saisie est vide et aucun élément combo sélectionné, réaffichage de la liste complète
+                if (cbxLivresComGenres.SelectedIndex < 0 && cbxLivresComPublics.SelectedIndex < 0 && cbxLivresComRayons.SelectedIndex < 0
+                    && txtNumDoc.Text.Equals(""))
+                {
+                    RemplirCmdLivresListeComplete();
+                }
+            }
+        }
+
+        private void btnRechercherCom_Click(object sender, EventArgs e)
+        {
+            if (!txtNumDoc.Text.Equals(""))
+            {
+                txtCommandeLivresRecherche.Text = "";
+                cbxLivresComGenres.SelectedIndex = -1;
+                cbxLivresComRayons.SelectedIndex = -1;
+                cbxLivresComPublics.SelectedIndex = -1;
+                Livre livre = lesLivres.Find(x => x.Id.Equals(txtNumDoc.Text));
+                if (livre != null)
+                {
+                    List<Livre> livres = new List<Livre>() { livre };
+                    RemplirCmdLivresListe(livres);
+                }
+                else
+                {
+                    MessageBox.Show("numéro introuvable");
+                    RemplirCmdLivresListeComplete();
+                }
+            }
+            else
+            {
+                RemplirCmdLivresListeComplete();
+            }
+        }
+
+        /// <summary>
+        /// Remplit le DataGridView avec les commandes associées au livre sélectionné.
+        /// </summary>
+        /// <param name="commandes">Liste des commandes.</param>
+        private void RemplirCmdLivresCommandes(List<CommandeDocument> commandes)
+        {
+            BindingSource bdgCommandes = new BindingSource();
+            bdgCommandes.DataSource = commandes;
+            dgvLivresComListeCom.DataSource = bdgCommandes;
+
+            // Configurer l'affichage des colonnes
+            dgvLivresComListeCom.Columns["Id"].HeaderText = "ID Commande";
+            dgvLivresComListeCom.Columns["DateCommande"].HeaderText = "Date de Commande";
+            dgvLivresComListeCom.Columns["Montant"].HeaderText = "Montant (€)";
+            dgvLivresComListeCom.Columns["NbExemplaire"].HeaderText = "Exemplaires";
+            dgvLivresComListeCom.Columns["Etat"].HeaderText = "État";
+
+            // Masquer les colonnes IdSuivi et IdLivreDvd
+            if (dgvLivresComListeCom.Columns.Contains("IdSuivi"))
+            {
+                dgvLivresComListeCom.Columns["IdSuivi"].Visible = false;
+            }
+
+            if (dgvLivresComListeCom.Columns.Contains("IdLivreDvd"))
+            {
+                dgvLivresComListeCom.Columns["IdLivreDvd"].Visible = false;
+            }
+
+            // Réorganiser les colonnes en fonction de leur index d'affichage
+            dgvLivresComListeCom.Columns["Id"].DisplayIndex = 0;
+            dgvLivresComListeCom.Columns["DateCommande"].DisplayIndex = 1;
+            dgvLivresComListeCom.Columns["Montant"].DisplayIndex = 2;
+            dgvLivresComListeCom.Columns["NbExemplaire"].DisplayIndex = 3;
+            dgvLivresComListeCom.Columns["Etat"].DisplayIndex = 4;
+
+            dgvLivresComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
+
+
+        private void dgvLivresComListe_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvLivresComListe.CurrentRow != null)
+            {
+                // Récupère le livre sélectionné
+                Livre livreSelectionne = (Livre)dgvLivresComListe.CurrentRow.DataBoundItem;
+
+                // Utilise la méthode du contrôleur pour récupérer les commandes associées au livre sélectionné
+                List<CommandeDocument> commandesAssociees = controller.GetCommandesLivres(livreSelectionne.Id);
+
+                // Remplir la DataGridView avec les commandes récupérées
+                RemplirCmdLivresCommandes(commandesAssociees);
+            }
+        }
     }
+    #endregion
 }

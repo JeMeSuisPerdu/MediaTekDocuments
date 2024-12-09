@@ -137,7 +137,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<Suivi> GetAllSuivis()
         {
-            IEnumerable<Suivi> LesSuivis = TraitementRecup<Suivi>(GET, "suivi");
+            IEnumerable<Suivi> LesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
             return new List<Suivi>(LesSuivis);
         }
         /// <summary>
@@ -146,7 +146,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<Etat> GetAllEtats()
         {
-            IEnumerable<Etat> lesEtats = TraitementRecup<Etat>(GET, "etat");
+            IEnumerable<Etat> lesEtats = TraitementRecup<Etat>(GET, "etat", null);
             return new List<Etat>(lesEtats);
         }
 
@@ -265,70 +265,14 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Convertit en json un couple nom/valeur
-        /// </summary>
-        /// <param name="nom"></param>
-        /// <param name="valeur"></param>
-        /// <returns>couple au format json</returns>
-        private String ConvertToJson(Object nom, Object valeur)
-        {
-            Dictionary<Object, Object> dictionary = new Dictionary<Object, Object>
-            {
-                { nom, valeur }
-            };
-            return JsonConvert.SerializeObject(dictionary);
-        }
-
-        /// <summary>
-        /// Traitement de la récupération du retour de l'api, avec conversion du json en liste pour les select (GET)
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="methode">verbe HTTP (GET, POST, PUT, DELETE)</param>
-        /// <param name="message">information envoyée</param>
-        /// <returns>liste d'objets récupérés (ou liste vide)</returns>
-        private List<T> TraitementRecup<T>(String methode, String message)
-        {
-            List<T> liste = new List<T>();
-            try
-            {
-                Console.WriteLine("TraitementRecup " + methode + " et " + message);
-                JObject retour = api.RecupDistant(methode, message);
-                // extraction du code retourné
-                String code = (String)retour["code"];
-                if (code.Equals("200"))
-                {
-                    // dans le cas du GET (select), récupération de la liste d'objets
-                    if (methode.Equals(GET))
-                    {
-                        String resultString = JsonConvert.SerializeObject(retour["result"]);
-                        // construction de la liste d'objets à partir du retour de l'api
-                        liste = JsonConvert.DeserializeObject<List<T>>(resultString, new CustomBooleanJsonConverter());
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("code erreur = " + code + " message = " + (String)retour["message"]);
-                    //Log.Error("Access.TraitementRecup code erreur = " + code + " message = " + (String)retour["message"]);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Erreur lors de l'accès à l'API : " + e.Message);
-                //Log.Fatal("Erreur lors de l'accès à l'API : " + e.Message);
-                Environment.Exit(0);
-            }
-            return liste;
-        }
-
-        /// <summary>
         /// Retourne les commandes d'un livre
         /// </summary>
         /// <param name="idLivre"></param>
         /// <returns></returns>
         public List<CommandeDocument> GetCommandesLivres(string idLivre)
         {
-            String jsonIdDocument = ConvertToJson("idLivreDvd", idLivre);
-            List<CommandeDocument> lesCommandesLivres = TraitementRecup<CommandeDocument>(GET, "commandedocument/" + jsonIdDocument);
+            String jsonIdDocument = convertToJson("idLivreDvd", idLivre);
+            List<CommandeDocument> lesCommandesLivres = TraitementRecup<CommandeDocument>(GET, "infocommandedocument/" + jsonIdDocument,null);
             return lesCommandesLivres;
         }
         /// <summary>
@@ -339,9 +283,10 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public string GetMaxIndex(string maxIndex)
         {
-            List<Categorie> maxindex = TraitementRecup<Categorie>(GET, maxIndex);
+            List<Categorie> maxindex = TraitementRecup<Categorie>(GET, maxIndex, null);
             return maxindex[0].Id;
         }
+
 
     }
 }
