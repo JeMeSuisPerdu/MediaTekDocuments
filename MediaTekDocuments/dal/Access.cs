@@ -119,7 +119,15 @@ namespace MediaTekDocuments.dal
             List<Dvd> lesDvd = TraitementRecup<Dvd>(GET, "dvd", null);
             return lesDvd;
         }
-
+        /// <summary>
+        /// Retourne tous états de la table suivi
+        /// </summary>
+        /// <returns>Liste d'objets Dvd</returns>
+        public List<Suivi> GetAllSuivis()
+        {
+            List<Suivi> allsuivi = TraitementRecup<Suivi>(GET, "allsuivi", null);
+            return allsuivi;
+        }
         /// <summary>
         /// Retourne toutes les revues à partir de la BDD
         /// </summary>
@@ -130,16 +138,6 @@ namespace MediaTekDocuments.dal
             return lesRevues;
         }
 
-
-        /// <summary>
-        /// Retourne tous les suivis à partir de la BDD
-        /// </summary>
-        /// <returns></returns>
-        public List<Suivi> GetAllSuivis()
-        {
-            IEnumerable<Suivi> LesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
-            return new List<Suivi>(LesSuivis);
-        }
         /// <summary>
         /// Retourne tous les etats à partir de la BDD
         /// </summary>
@@ -181,6 +179,7 @@ namespace MediaTekDocuments.dal
             }
             return false;
         }
+
 
         /// <summary>
         /// Traitement de la récupération du retour de l'api, avec conversion du json en liste pour les select (GET)
@@ -275,18 +274,21 @@ namespace MediaTekDocuments.dal
             List<CommandeDocument> lesCommandesLivres = TraitementRecup<CommandeDocument>(GET, "infocommandedocument/" + jsonIdDocument,null);
             return lesCommandesLivres;
         }
-        /// <summary>
-        /// Retourne l'index max en string
-        /// de certaines tables
-        /// </summary>
-        /// <param name="maxIndex"></param>
-        /// <returns></returns>
-        public string GetMaxIndex(string maxIndex)
+
+        public bool CreerCommandeDocument(CommandeDocument detailsCommande)
         {
-            List<Categorie> maxindex = TraitementRecup<Categorie>(GET, maxIndex, null);
-            return maxindex[0].Id;
+            string jsonDetailCommande = JsonConvert.SerializeObject(detailsCommande, new CustomDateTimeConverter());
+            Console.WriteLine(uriApi + "commandeDocAjout?champs=" + jsonDetailCommande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandeDocAjout", "champs=" + jsonDetailCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
         }
-
-
     }
 }

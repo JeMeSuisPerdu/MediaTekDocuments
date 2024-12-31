@@ -1,19 +1,18 @@
 ﻿using System;
 
-
 namespace MediaTekDocuments.model
 {
     public class Commande
     {
-        public string Id { get; }
+        public int? Id { get; set; } // ID nullable
         public DateTime DateCommande { get; set; }
-        public double Montant { get; }
+        public double Montant { get; set; }
 
-        public Commande(string id, DateTime dateCommande, double montant)
+        public Commande(int? id, DateTime dateCommande, double montant)
         {
-            Id = id;
-            DateCommande = dateCommande;
-            Montant = montant;
+            this.Id = id;
+            this.DateCommande = dateCommande;
+            this.Montant = montant;
         }
     }
 }

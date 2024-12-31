@@ -20,6 +20,7 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgGenres = new BindingSource();
         private readonly BindingSource bdgPublics = new BindingSource();
         private readonly BindingSource bdgRayons = new BindingSource();
+        private readonly BindingSource bdgSuivis= new BindingSource();
 
 
         /// <summary>
@@ -1278,13 +1279,118 @@ namespace MediaTekDocuments.view
 
         #region Onglet Commande de Livre
 
-        private void TabCmdLivre_Enter(object sender, EventArgs e)
+        private string Mode = ""; // Mode courant (Ajout, Supp, Modif)
+
+        private void VisibleGroupBoxCommandeLivre()
         {
-            lesLivres = controller.GetAllLivres();
-            RemplirComboCategorie(controller.GetAllGenres(), bdgGenres, cbxLivresComGenres);
-            RemplirComboCategorie(controller.GetAllPublics(), bdgPublics, cbxLivresComPublics);
-            RemplirComboCategorie(controller.GetAllRayons(), bdgRayons, cbxLivresComRayons);
-            RemplirCmdLivresListeComplete();
+            txbLivresComNbCommande.ReadOnly = true;
+            txbLivresComMontant.ReadOnly = true;
+            dtpLivresComDateCommande.Enabled = false;
+            txbLivresComNbExemplaires.ReadOnly = true;
+            txbLivresComNumLivre.Visible = false;
+            cbxLivresComEtat.Visible = false;
+            labelNumCmdLivre.Visible = false;
+            labelEtatCmdLivre.Visible = false;
+            btnLivresComValider.Visible = false;
+            btnLivresComAnnuler.Visible = false;
+        }
+
+        private void VisibleCommandeLivre()
+        {
+            label70.Visible = false;
+            txbLivresComNbCommande.Visible = false;
+            txbLivresComMontant.ReadOnly = false;
+            dtpLivresComDateCommande.Enabled = true;
+            txbLivresComNbExemplaires.ReadOnly = false;
+            txbLivresComNumLivre.Visible = true;
+            labelEtatCmdLivre.Visible = false;
+            cbxLivresComEtat.Visible = false;
+            labelNumCmdLivre.Visible = true;
+            btnLivresComValider.Visible = true;
+            btnLivresComAnnuler.Visible = true;
+        }
+
+        /// <summary>
+        /// vide les zones de recherche et de filtre
+        /// </summary>
+        private void ViderCmdLivresInfos()
+        {
+            txbLivresComNbCommande.Text = "";
+            dtpLivresComDateCommande.Value = DateTime.Now;
+            txbLivresComMontant.Text = "";
+            txbLivresComNbExemplaires.Text = "";
+            txbLivresComNumLivre.Text = "";
+        }
+
+        /// <summary>
+        /// Rempli le combo box des etats pour l'ajout et la modification 
+        /// </summary>
+        /// <param name="allSuivis">liste des objets de type suivi</param> 
+        /// <param name="bdg">bindingsource contenant les informations</param>
+        /// <param name="cbx">combobox à remplir</param>
+        public void RemplirComboEtatCmdLivre(List<Suivi> allSuivis, BindingSource bdg, ComboBox cbx)
+        {
+            bdg.DataSource = allSuivis;
+            cbx.DataSource = bdg;
+            if (cbx.Items.Count > 0)
+            {
+                cbx.SelectedIndex = -1;
+            }
+        }
+
+        /// <summary>
+        /// Modifie la visibilité de deux boutons pour les rendre invisibles.
+        /// </summary>
+        /// <param name="button1">Premier bouton</param>
+        /// <param name="button2">Deuxième bouton</param>
+        private void RendreBoutonsInvisibles(Button button1, Button button2, Button button3)
+        {
+            button1.Visible = false;
+            button2.Visible = false;
+            button3.Visible = false;
+        }
+
+        private void AfficheCommandeLivreInfo(CommandeDocument commande)
+        {
+            if (dgvLivresComListe.Rows.Count > 0 && commande != null)
+            {
+                // Remplir les champs avec les informations de la commande sélectionnée
+                txbLivresComNbCommande.Text = commande.Id.ToString();
+                dtpLivresComDateCommande.Value = commande.DateCommande;
+                txbLivresComMontant.Text = commande.Montant.ToString("F2");
+                txbLivresComNbExemplaires.Text = commande.NbExemplaire.ToString();
+                txbLivresComNumLivre.Text = commande.IdLivreDvd;
+                // Vérifier et sélectionner l'état dans le ComboBox
+                if (!cbxLivresComEtat.Items.Contains(commande.Etat))
+                {
+                    cbxLivresComEtat.Items.Add(commande.Etat); // Ajouter l'état manquant si nécessaire
+                }
+                cbxLivresComEtat.SelectedItem = commande.Etat;
+            }
+            else
+            {
+                ViderCmdLivresInfos();
+            }
+        }
+
+        /// <summary>
+        /// Configure un ComboBox pour définir la valeur par défaut sur le premier élément
+        /// et le rendre non sélectionnable par l'utilisateur.
+        /// </summary>
+        /// <param name="comboBox">Le ComboBox à configurer</param>
+        public void ComboBoxNonSelectionnable(ComboBox comboBox)
+        {
+            if (comboBox != null)
+            {
+                // Désactiver le ComboBox pour empêcher la sélection
+                comboBox.Enabled = false;
+
+                // Sélectionner le premier élément de la liste comme valeur par défaut
+                if (comboBox.Items.Count > 0)
+                {
+                    comboBox.SelectedIndex = 0;
+                }
+            }
         }
 
         private void RemplirCmdLivresListeComplete()
@@ -1292,7 +1398,6 @@ namespace MediaTekDocuments.view
             RemplirCmdLivresListe(lesLivres);
             VideCmdLivresZones();
         }
-
 
         /// <summary>
         /// vide les zones de recherche et de filtre
@@ -1305,6 +1410,7 @@ namespace MediaTekDocuments.view
             txtNumDoc.Text = "";
             txtCommandeLivresRecherche.Text = "";
         }
+
         /// <summary>
         /// Remplit le dategrid avec la liste reçue en paramètre
         /// </summary>
@@ -1323,21 +1429,74 @@ namespace MediaTekDocuments.view
             dgvLivresComListe.Columns["titre"].DisplayIndex = 1;
         }
 
+        /// <summary>
+        /// Remplit le DataGridView avec les commandes associées au livre sélectionné.
+        /// </summary>
+        /// <param name="commandes">Liste des commandes.</param>
+        private void RemplirCmdLivresCommandes(List<CommandeDocument> commandes)
+        {
+            BindingSource bdgCommandes = new BindingSource();
+            bdgCommandes.DataSource = commandes;
+            dgvLivresComListeCom.DataSource = bdgCommandes;
+
+            // Configurer l'affichage des colonnes
+            dgvLivresComListeCom.Columns["Id"].HeaderText = "ID Commande";
+            dgvLivresComListeCom.Columns["DateCommande"].HeaderText = "Date de Commande";
+            dgvLivresComListeCom.Columns["Montant"].HeaderText = "Montant (€)";
+            dgvLivresComListeCom.Columns["NbExemplaire"].HeaderText = "Exemplaires";
+            dgvLivresComListeCom.Columns["Etat"].HeaderText = "État";
+
+            // Réorganiser les colonnes en fonction de leur index d'affichage
+            dgvLivresComListeCom.Columns["Id"].DisplayIndex = 0;
+            dgvLivresComListeCom.Columns["DateCommande"].DisplayIndex = 1;
+            dgvLivresComListeCom.Columns["Montant"].DisplayIndex = 2;
+            dgvLivresComListeCom.Columns["NbExemplaire"].DisplayIndex = 3;
+            dgvLivresComListeCom.Columns["Etat"].DisplayIndex = 4;
+
+            dgvLivresComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
+
+        /// <summary>
+        /// Désactive la DataGridView pour ne pas avoir de problème en cas d'ajout ou de modification
+        /// </summary>
+        /// <param name="dataGridView">Le DataGridView à configurer</param>
+        private void DesactiverDataGridView(DataGridView dgv)
+        {
+            dgv.Enabled = false; // Désactive l'interaction utilisateur avec la DataGridView
+                                 // Appliquer un style visuel grisé
+            dgv.DefaultCellStyle.BackColor = SystemColors.Control; // Fond gris clair
+            dgv.DefaultCellStyle.ForeColor = SystemColors.GrayText; // Texte grisé
+            dgv.DefaultCellStyle.SelectionBackColor = SystemColors.Control; // Fond de la sélection grisé
+            dgv.DefaultCellStyle.SelectionForeColor = SystemColors.GrayText; // Texte de la sélection grisé
+
+            // Désactiver les bordures de cellules sélectionnées (optionnel)
+            dgv.DefaultCellStyle.SelectionBackColor = dgv.DefaultCellStyle.BackColor;
+            dgv.DefaultCellStyle.SelectionForeColor = dgv.DefaultCellStyle.ForeColor;
+        }
+
+
+
+        private void TabCmdLivre_Enter(object sender, EventArgs e)
+        {
+            lesLivres = controller.GetAllLivres();
+            RemplirComboCategorie(controller.GetAllGenres(), bdgGenres, cbxLivresComGenres);
+            RemplirComboCategorie(controller.GetAllPublics(), bdgPublics, cbxLivresComPublics);
+            RemplirComboCategorie(controller.GetAllRayons(), bdgRayons, cbxLivresComRayons);
+            RemplirCmdLivresListeComplete();
+            VisibleGroupBoxCommandeLivre();
+        }
         private void button4_Click(object sender, EventArgs e)
         {
             RemplirCmdLivresListeComplete();
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             RemplirCmdLivresListeComplete();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             RemplirCmdLivresListeComplete();
         }
-
         private void txtCommandeLivresRecherche_TextChanged(object sender, EventArgs e)
         {
             if (!txtCommandeLivresRecherche.Text.Equals(""))
@@ -1360,7 +1519,6 @@ namespace MediaTekDocuments.view
                 }
             }
         }
-
         private void btnRechercherCom_Click(object sender, EventArgs e)
         {
             if (!txtNumDoc.Text.Equals(""))
@@ -1386,46 +1544,6 @@ namespace MediaTekDocuments.view
                 RemplirCmdLivresListeComplete();
             }
         }
-
-        /// <summary>
-        /// Remplit le DataGridView avec les commandes associées au livre sélectionné.
-        /// </summary>
-        /// <param name="commandes">Liste des commandes.</param>
-        private void RemplirCmdLivresCommandes(List<CommandeDocument> commandes)
-        {
-            BindingSource bdgCommandes = new BindingSource();
-            bdgCommandes.DataSource = commandes;
-            dgvLivresComListeCom.DataSource = bdgCommandes;
-
-            // Configurer l'affichage des colonnes
-            dgvLivresComListeCom.Columns["Id"].HeaderText = "ID Commande";
-            dgvLivresComListeCom.Columns["DateCommande"].HeaderText = "Date de Commande";
-            dgvLivresComListeCom.Columns["Montant"].HeaderText = "Montant (€)";
-            dgvLivresComListeCom.Columns["NbExemplaire"].HeaderText = "Exemplaires";
-            dgvLivresComListeCom.Columns["Etat"].HeaderText = "État";
-
-            // Masquer les colonnes IdSuivi et IdLivreDvd
-            if (dgvLivresComListeCom.Columns.Contains("IdSuivi"))
-            {
-                dgvLivresComListeCom.Columns["IdSuivi"].Visible = false;
-            }
-
-            if (dgvLivresComListeCom.Columns.Contains("IdLivreDvd"))
-            {
-                dgvLivresComListeCom.Columns["IdLivreDvd"].Visible = false;
-            }
-
-            // Réorganiser les colonnes en fonction de leur index d'affichage
-            dgvLivresComListeCom.Columns["Id"].DisplayIndex = 0;
-            dgvLivresComListeCom.Columns["DateCommande"].DisplayIndex = 1;
-            dgvLivresComListeCom.Columns["Montant"].DisplayIndex = 2;
-            dgvLivresComListeCom.Columns["NbExemplaire"].DisplayIndex = 3;
-            dgvLivresComListeCom.Columns["Etat"].DisplayIndex = 4;
-
-            dgvLivresComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        }
-
-
         private void dgvLivresComListe_SelectionChanged(object sender, EventArgs e)
         {
             if (dgvLivresComListe.CurrentRow != null)
@@ -1440,6 +1558,77 @@ namespace MediaTekDocuments.view
                 RemplirCmdLivresCommandes(commandesAssociees);
             }
         }
+        private void dgvLivresComListeCom_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvLivresComListeCom.CurrentRow != null)
+            {
+                // Récupérer la commande sélectionnée dans la DataGridView
+                var commande = (CommandeDocument)dgvLivresComListeCom.CurrentRow.DataBoundItem;
+
+                // Appeler AfficheCommandeLivreInfo avec une seule commande
+                AfficheCommandeLivreInfo(commande);
+            }
+        }
+        private void btnLivresComModifier_Click(object sender, EventArgs e)
+        {
+            Mode = "Modification";
+            VisibleCommandeLivre();
+        }
+        private void btnLivresComSupprimer_Click(object sender, EventArgs e)
+        {
+            Mode = "Suppression";
+        }
+        private void btnLivresComAjouter_Click(object sender, EventArgs e)
+        {
+            Mode = "Ajout";
+            VisibleCommandeLivre();
+            ViderCmdLivresInfos();
+            RemplirComboEtatCmdLivre(controller.GetAllSuivis(), bdgSuivis, cbxLivresComEtat);
+            RendreBoutonsInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter);
+            ComboBoxNonSelectionnable(cbxLivresComEtat);
+            DesactiverDataGridView(dgvLivresComListe);
+            DesactiverDataGridView(dgvLivresComListeCom);
+        }
+        #endregion
+
+        private void btnLivresComValider_Click(object sender, EventArgs e)
+        {
+            // Vérifie le mode sélectionné et exécute l'opération correspondante
+            switch (Mode)
+            {
+                case "Ajout":
+                    DateTime dateCommande = dtpLivresComDateCommande.Value;
+                    double montant = double.Parse(txbLivresComMontant.Text);
+                    int nbExemplaires = int.Parse(txbLivresComNbExemplaires.Text);
+                    string numLivre = txbLivresComNumLivre.Text;
+
+                    CommandeDocument commandeDocument = new CommandeDocument(null,dateCommande, montant, nbExemplaires, numLivre, 1, "En cours");
+
+                    try
+                    {
+                        var result = controller.CreerCommandeDocument(commandeDocument);
+                        MessageBox.Show(result ? "Commande ajoutée avec succès." : "Erreur lors de l'ajout. Veuillez réessayer.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erreur lors de l'ajout de la commande : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+ 
+                    break;
+                case "Suppression":
+                    break;
+                case "Modification":
+                    break;
+                default:
+                    MessageBox.Show("Veuillez sélectionner une opération.");
+                    break;
+            }
+        }
+
+        private void btnLivresComAnnuler_Click(object sender, EventArgs e)
+        {
+
+        }
     }
-    #endregion
 }
+

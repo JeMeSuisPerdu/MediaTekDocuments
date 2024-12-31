@@ -126,42 +126,16 @@ namespace MediaTekDocuments.controller
             return access.GetCommandesLivres(idLivre);
         }
 
-        /// <summary>
-        /// Retourne l'id max des commandes
-        /// </summary>
-        /// <returns></returns>
-        public string GetNbCommandeMax()
-        {
-            return access.GetMaxIndex("maxcommande");
-        }
-
-        /// <summary>
-        /// Retourne l'id max des livres
-        /// </summary>
-        /// <returns></returns>
-        public string GetNbLivreMax()
-        {
-            return access.GetMaxIndex("maxlivre");
-        }
-
-        /// <summary>
-        /// Retourne l'id max des Dvd
-        /// </summary>
-        /// <returns></returns>
-        public string GetNbDvdMax()
-        {
-            return access.GetMaxIndex("maxdvd");
-        }
-
-        /// <summary>
-        /// Retourne l'id max des revues
-        /// </summary>
-        /// <returns></returns>
-        public string GetNbRevueMax()
-        {
-            return access.GetMaxIndex("maxrevue");
-        }
-
         #endregion
+
+        /// <summary>
+        /// Crée un détail de commande dans la base de données
+        /// </summary>
+        /// <param name="detailsCommande">L'objet DetailsCommande à insérer</param>
+        /// <returns>Création du details</returns>
+        public bool CreerCommandeDocument(CommandeDocument detailsCommande)
+        {
+            return access.CreerCommandeDocument(detailsCommande);
+        }
     }
 }

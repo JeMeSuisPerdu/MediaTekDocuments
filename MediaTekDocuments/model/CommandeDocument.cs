@@ -1,16 +1,16 @@
 ﻿using System;
 
-
 namespace MediaTekDocuments.model
 {
     public class CommandeDocument : Commande
     {
-        public int NbExemplaire { get; }
-        public string IdLivreDvd { get; }
-        public int IdSuivi { get; }
-        public string Etat { get; }
+        public int NbExemplaire { get; set; }
+        public string IdLivreDvd { get; set; }
+        public int IdSuivi { get; set; }
+        public string Etat { get; set; }
 
-        public CommandeDocument(string id, DateTime dateCommande, float montant, int nbExemplaire,
+        // L'ID est maintenant nullable (int?)
+        public CommandeDocument(int? id, DateTime dateCommande, double montant, int nbExemplaire,
             string idLivreDvd, int idSuivi, string etat)
             : base(id, dateCommande, montant)
         {
