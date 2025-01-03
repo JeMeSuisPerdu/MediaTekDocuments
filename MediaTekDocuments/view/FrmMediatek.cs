@@ -1279,10 +1279,11 @@ namespace MediaTekDocuments.view
 
         #region Onglet Commande de Livre
 
-        private string Mode = ""; // Mode courant (Ajout, Supp, Modif)
-
+        private string Mode = ""; // Mode (Ajout, Supp, Modif)
         private void VisibleGroupBoxCommandeLivre()
         {
+            label70.Visible = true;
+            txbLivresComNbCommande.Visible = true;
             txbLivresComNbCommande.ReadOnly = true;
             txbLivresComMontant.ReadOnly = true;
             dtpLivresComDateCommande.Enabled = false;
@@ -1294,7 +1295,6 @@ namespace MediaTekDocuments.view
             btnLivresComValider.Visible = false;
             btnLivresComAnnuler.Visible = false;
         }
-
         private void VisibleCommandeLivre()
         {
             label70.Visible = false;
@@ -1309,7 +1309,6 @@ namespace MediaTekDocuments.view
             btnLivresComValider.Visible = true;
             btnLivresComAnnuler.Visible = true;
         }
-
         /// <summary>
         /// vide les zones de recherche et de filtre
         /// </summary>
@@ -1321,84 +1320,71 @@ namespace MediaTekDocuments.view
             txbLivresComNbExemplaires.Text = "";
             txbLivresComNumLivre.Text = "";
         }
-
         /// <summary>
-        /// Rempli le combo box des etats pour l'ajout et la modification 
-        /// </summary>
-        /// <param name="allSuivis">liste des objets de type suivi</param> 
-        /// <param name="bdg">bindingsource contenant les informations</param>
-        /// <param name="cbx">combobox à remplir</param>
-        public void RemplirComboEtatCmdLivre(List<Suivi> allSuivis, BindingSource bdg, ComboBox cbx)
-        {
-            bdg.DataSource = allSuivis;
-            cbx.DataSource = bdg;
-            if (cbx.Items.Count > 0)
-            {
-                cbx.SelectedIndex = -1;
-            }
-        }
-
-        /// <summary>
-        /// Modifie la visibilité de deux boutons pour les rendre invisibles.
+        /// Modifie la visibilité de deux boutons pour les rendre invisibles si true, et visibles si falses.
         /// </summary>
         /// <param name="button1">Premier bouton</param>
         /// <param name="button2">Deuxième bouton</param>
-        private void RendreBoutonsInvisibles(Button button1, Button button2, Button button3)
+        private void RendreBoutonsVisiblesOuInvisibles(Button button1, Button button2, Button button3, bool cacher)
         {
-            button1.Visible = false;
-            button2.Visible = false;
-            button3.Visible = false;
+            if (cacher)
+            {
+                button1.Visible = false;
+                button2.Visible = false;
+                button3.Visible = false;
+            }
+            else
+            {
+                button1.Visible = true;
+                button2.Visible = true;
+                button3.Visible = true;
+            }
         }
-
         private void AfficheCommandeLivreInfo(CommandeDocument commande)
         {
             if (dgvLivresComListe.Rows.Count > 0 && commande != null)
             {
-                // Remplir les champs avec les informations de la commande sélectionnée
+                // Remplir les champs avec les info de la commande sélectionnée
                 txbLivresComNbCommande.Text = commande.Id.ToString();
                 dtpLivresComDateCommande.Value = commande.DateCommande;
                 txbLivresComMontant.Text = commande.Montant.ToString("F2");
                 txbLivresComNbExemplaires.Text = commande.NbExemplaire.ToString();
                 txbLivresComNumLivre.Text = commande.IdLivreDvd;
-                // Vérifier et sélectionner l'état dans le ComboBox
-                if (!cbxLivresComEtat.Items.Contains(commande.Etat))
+
+                // nettoyer les éléments existants dans le ComboBox
+                cbxLivresComEtat.Items.Clear();
+                // récupérer tous les suivis
+                var suivis = controller.GetAllSuivis();
+                // Ajouter les suivis dans le ComboBox
+                var suivisItems = suivis.Select(s => new Suivi(s.Id, s.Etat)).ToArray();
+                cbxLivresComEtat.Items.AddRange(suivisItems);
+                // définir pair clé/valeur
+                cbxLivresComEtat.DisplayMember = "Etat";
+                cbxLivresComEtat.ValueMember = "Id";
+                // trouver l'état de la commande + sélectionner dans le ComboBox
+                var etatCommande = suivisItems.FirstOrDefault(s => s.Id == commande.IdSuivi);
+                if (etatCommande != null)
                 {
-                    cbxLivresComEtat.Items.Add(commande.Etat); // Ajouter l'état manquant si nécessaire
+                    cbxLivresComEtat.SelectedItem = etatCommande;
                 }
-                cbxLivresComEtat.SelectedItem = commande.Etat;
+                // événement pour récupérer l'id suivi lorsque l'état est sélectionné
+                cbxLivresComEtat.SelectedIndexChanged += (sender, e) =>
+                {
+                    var selectedEtat = (Suivi)cbxLivresComEtat.SelectedItem;
+                    int idSuiviSelectionne = selectedEtat.Id;
+                };
             }
+
             else
             {
                 ViderCmdLivresInfos();
             }
         }
-
-        /// <summary>
-        /// Configure un ComboBox pour définir la valeur par défaut sur le premier élément
-        /// et le rendre non sélectionnable par l'utilisateur.
-        /// </summary>
-        /// <param name="comboBox">Le ComboBox à configurer</param>
-        public void ComboBoxNonSelectionnable(ComboBox comboBox)
-        {
-            if (comboBox != null)
-            {
-                // Désactiver le ComboBox pour empêcher la sélection
-                comboBox.Enabled = false;
-
-                // Sélectionner le premier élément de la liste comme valeur par défaut
-                if (comboBox.Items.Count > 0)
-                {
-                    comboBox.SelectedIndex = 0;
-                }
-            }
-        }
-
         private void RemplirCmdLivresListeComplete()
         {
             RemplirCmdLivresListe(lesLivres);
             VideCmdLivresZones();
         }
-
         /// <summary>
         /// vide les zones de recherche et de filtre
         /// </summary>
@@ -1410,7 +1396,6 @@ namespace MediaTekDocuments.view
             txtNumDoc.Text = "";
             txtCommandeLivresRecherche.Text = "";
         }
-
         /// <summary>
         /// Remplit le dategrid avec la liste reçue en paramètre
         /// </summary>
@@ -1428,7 +1413,6 @@ namespace MediaTekDocuments.view
             dgvLivresComListe.Columns["id"].DisplayIndex = 0;
             dgvLivresComListe.Columns["titre"].DisplayIndex = 1;
         }
-
         /// <summary>
         /// Remplit le DataGridView avec les commandes associées au livre sélectionné.
         /// </summary>
@@ -1455,23 +1439,106 @@ namespace MediaTekDocuments.view
 
             dgvLivresComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-
         /// <summary>
         /// Désactive la DataGridView pour ne pas avoir de problème en cas d'ajout ou de modification
         /// </summary>
         /// <param name="dataGridView">Le DataGridView à configurer</param>
-        private void DesactiverDataGridView(DataGridView dgv)
+        private void DesactiverDataGridView(DataGridView dgv, bool bloquer)
         {
-            dgv.Enabled = false; // Désactive l'interaction utilisateur avec la DataGridView
-                                 // Appliquer un style visuel grisé
-            dgv.DefaultCellStyle.BackColor = SystemColors.Control; // Fond gris clair
-            dgv.DefaultCellStyle.ForeColor = SystemColors.GrayText; // Texte grisé
-            dgv.DefaultCellStyle.SelectionBackColor = SystemColors.Control; // Fond de la sélection grisé
-            dgv.DefaultCellStyle.SelectionForeColor = SystemColors.GrayText; // Texte de la sélection grisé
+            if (bloquer)
+            {
+                // Désactiver la sélection et interdire les interactions
+                dgv.ClearSelection();
+                dgv.Enabled = false;
+                dgv.ReadOnly = true;
+            }
+            else
+            {
+                // Réactiver la sélection et les interactions
+                dgv.ClearSelection();
+                dgv.Enabled = true;
+                dgv.ReadOnly = true;
+            }
+        }
+        private void GererEtatComboBox(int etatActuel)
+        {
+            cbxLivresComEtat.Items.Clear();
 
-            // Désactiver les bordures de cellules sélectionnées (optionnel)
-            dgv.DefaultCellStyle.SelectionBackColor = dgv.DefaultCellStyle.BackColor;
-            dgv.DefaultCellStyle.SelectionForeColor = dgv.DefaultCellStyle.ForeColor;
+            switch (etatActuel)
+            {
+                case 1: // En cours
+                    cbxLivresComEtat.Items.Add(new Suivi(2, "Livrée"));
+                    cbxLivresComEtat.Items.Add(new Suivi(4, "Relancée"));
+                    cbxLivresComEtat.Items.Add(new Suivi(5, "Annulée"));
+                    break;
+
+                case 2: // Livrée
+                    cbxLivresComEtat.Items.Add(new Suivi(3, "Réglée"));
+                    cbxLivresComEtat.Items.Add(new Suivi(5, "Annulée"));
+                    break;
+
+                case 3: // Réglée
+                    cbxLivresComEtat.Items.Add(new Suivi(5, "Annulée"));
+                    break;
+
+                case 4: // Relancée
+                    cbxLivresComEtat.Items.Add(new Suivi(2, "Livrée"));
+                    cbxLivresComEtat.Items.Add(new Suivi(5, "Annulée"));
+                    break;
+
+                case 5: // Annulée
+                        // Une commande annulée ne peut pas changer d'état.
+                    MessageBox.Show("Une commande annulée ne peut pas changer d'état.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    break;
+
+                default:
+                    MessageBox.Show("État inconnu.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
+
+            // Sélectionner automatiquement la première option si disponible
+            if (cbxLivresComEtat.Items.Count > 0)
+            {
+                cbxLivresComEtat.SelectedIndex = 0;
+            }
+        }
+        private void LabelCrudTitre(string mode, bool cacher)
+        {
+            // Visibilité du texte
+            lblCrudTitre.Visible = cacher;
+
+            switch (mode)
+            {
+                case "Ajout":
+                    lblCrudTitre.Text = "Êtes-vous sûr de réaliser cet ajout ?";
+                    break;
+                case "Suppression":
+                    lblCrudTitre.Text = "Êtes-vous sûr de réaliser cette suppression ?";
+                    break;
+                case "Modification":
+                    lblCrudTitre.Text = "Êtes-vous sûr de réaliser cette modification ?";
+                    break;
+                default:
+                    lblCrudTitre.Text = "";
+                    break;
+            }
+        }
+        private bool VerifierSelection(DataGridView dgvLivresComListeCom)
+        {
+            if (dgvLivresComListeCom.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vous devez sélectionner une ligne pour réaliser cette opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false; // Aucun élément sélectionné
+            }
+            return true; // Une ligne est sélectionnée
+        }
+        private void CacherValider()
+        {
+            LabelCrudTitre(null, false);
+            VisibleGroupBoxCommandeLivre();
+            DesactiverDataGridView(dgvLivresComListe, false);
+            DesactiverDataGridView(dgvLivresComListeCom, false);
+            RendreBoutonsVisiblesOuInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter, false);
         }
 
 
@@ -1564,7 +1631,6 @@ namespace MediaTekDocuments.view
             {
                 // Récupérer la commande sélectionnée dans la DataGridView
                 var commande = (CommandeDocument)dgvLivresComListeCom.CurrentRow.DataBoundItem;
-
                 // Appeler AfficheCommandeLivreInfo avec une seule commande
                 AfficheCommandeLivreInfo(commande);
             }
@@ -1572,63 +1638,154 @@ namespace MediaTekDocuments.view
         private void btnLivresComModifier_Click(object sender, EventArgs e)
         {
             Mode = "Modification";
-            VisibleCommandeLivre();
+
+            if (!VerifierSelection(dgvLivresComListeCom))
+            {
+                Mode = "";
+            }
+            else
+            {
+                LabelCrudTitre(Mode, true);
+                VisibleCommandeLivre();
+                RendreBoutonsVisiblesOuInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter, true);
+                cbxLivresComEtat.Visible = true;
+                DesactiverDataGridView(dgvLivresComListe, true);
+                DesactiverDataGridView(dgvLivresComListeCom, true);
+                // Vérifier si un élément a été sélectionné dans le ComboBox
+                if (cbxLivresComEtat.SelectedItem != null)
+                {
+                    // Récupérer l'objet Suivi sélectionné
+                    Suivi suiviSelectionne = (Suivi)cbxLivresComEtat.SelectedItem;
+
+                    // Récupérer l'ID du suivi sélectionné
+                    int idSuivi = suiviSelectionne.Id;
+                    GererEtatComboBox(idSuivi);
+                }
+            }
         }
         private void btnLivresComSupprimer_Click(object sender, EventArgs e)
         {
             Mode = "Suppression";
+            if (!VerifierSelection(dgvLivresComListeCom))
+            {
+                Mode = "";
+            }
+            else
+            {
+                LabelCrudTitre(Mode, true);
+                RendreBoutonsVisiblesOuInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter, true);
+                VisibleCommandeLivre();
+            }
+
         }
         private void btnLivresComAjouter_Click(object sender, EventArgs e)
         {
             Mode = "Ajout";
+            LabelCrudTitre(Mode, true);
             VisibleCommandeLivre();
+            RendreBoutonsVisiblesOuInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter, true);
+            DesactiverDataGridView(dgvLivresComListe, true);
+            DesactiverDataGridView(dgvLivresComListeCom, true);
             ViderCmdLivresInfos();
-            RemplirComboEtatCmdLivre(controller.GetAllSuivis(), bdgSuivis, cbxLivresComEtat);
-            RendreBoutonsInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter);
-            ComboBoxNonSelectionnable(cbxLivresComEtat);
-            DesactiverDataGridView(dgvLivresComListe);
-            DesactiverDataGridView(dgvLivresComListeCom);
         }
-        #endregion
-
         private void btnLivresComValider_Click(object sender, EventArgs e)
         {
-            // Vérifie le mode sélectionné et exécute l'opération correspondante
-            switch (Mode)
+            try
             {
-                case "Ajout":
-                    DateTime dateCommande = dtpLivresComDateCommande.Value;
-                    double montant = double.Parse(txbLivresComMontant.Text);
-                    int nbExemplaires = int.Parse(txbLivresComNbExemplaires.Text);
-                    string numLivre = txbLivresComNumLivre.Text;
+                // Récupération des données communes
+                DateTime dateCommande = dtpLivresComDateCommande.Value;
+                double montant = double.TryParse(txbLivresComMontant.Text, out double tempMontant) ? tempMontant : throw new Exception("Montant invalide.");
+                int nbExemplaires = int.TryParse(txbLivresComNbExemplaires.Text, out int tempNbExemplaires) ? tempNbExemplaires : throw new Exception("Nombre d'exemplaires invalide.");
+                string numLivre = txbLivresComNumLivre.Text;
 
-                    CommandeDocument commandeDocument = new CommandeDocument(null,dateCommande, montant, nbExemplaires, numLivre, 1, "En cours");
+                CommandeDocument commandeDocument = null;
 
-                    try
-                    {
-                        var result = controller.CreerCommandeDocument(commandeDocument);
-                        MessageBox.Show(result ? "Commande ajoutée avec succès." : "Erreur lors de l'ajout. Veuillez réessayer.");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Erreur lors de l'ajout de la commande : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
- 
-                    break;
-                case "Suppression":
-                    break;
-                case "Modification":
-                    break;
-                default:
-                    MessageBox.Show("Veuillez sélectionner une opération.");
-                    break;
+                // Vérifie le mode sélectionné et crée l'objet `CommandeDocument`
+                switch (Mode)
+                {
+                    case "Ajout":
+                        // Valeurs spécifiques à l'ajout
+                        commandeDocument = new CommandeDocument(null, dateCommande, montant, nbExemplaires, numLivre, 1, "En Cours");
+                        ExecuterOperation(() => controller.CreerCommandeDocument(commandeDocument), "Commande ajoutée avec succès.", "Erreur lors de l'ajout.");
+                        ViderCmdLivresInfos();
+                        CacherValider();
+                        break;
+
+                    case "Suppression":
+                        // Vérification de la sélection dans le ComboBox
+                        if (cbxLivresComEtat.SelectedItem == null)
+                            throw new Exception("Veuillez sélectionner un état de suivi pour la suppression.");
+
+                        Suivi suiviSelectionneSupp = (Suivi)cbxLivresComEtat.SelectedItem;
+                        int idSuiviSupp = suiviSelectionneSupp.Id;
+                        string etatSuiviSupp = suiviSelectionneSupp.Etat;
+
+                        int idCommandeSupp = int.TryParse(txbLivresComNbCommande.Text, out int tempIdCommandeSupp) ? tempIdCommandeSupp : throw new Exception("ID commande invalide.");
+                        commandeDocument = new CommandeDocument(idCommandeSupp, dateCommande, montant, nbExemplaires, numLivre, idSuiviSupp, etatSuiviSupp);
+                        ExecuterOperation(() => controller.SupprimerCommandeDocument(commandeDocument), "Commande supprimée avec succès.", "Erreur lors de la suppression.");
+                        ViderCmdLivresInfos();
+                        CacherValider();
+                        break;
+
+                    case "Modification":
+                        // Vérification de la sélection dans le ComboBox
+                        if (cbxLivresComEtat.SelectedItem == null)
+                            throw new Exception("Veuillez sélectionner un état de suivi pour la modification.");
+
+                        Suivi suiviSelectionneModif = (Suivi)cbxLivresComEtat.SelectedItem;
+                        int idSuiviModif = suiviSelectionneModif.Id;
+                        string etatSuiviModif = suiviSelectionneModif.Etat;
+
+                        int idCommandeModif = int.TryParse(txbLivresComNbCommande.Text, out int tempIdCommandeModif) ? tempIdCommandeModif : throw new Exception("ID commande invalide.");
+                        commandeDocument = new CommandeDocument(idCommandeModif, dateCommande, montant, nbExemplaires, numLivre, idSuiviModif, etatSuiviModif);
+                        ExecuterOperation(() => controller.ModifierCommandeDocument(commandeDocument), "Commande modifiée avec succès.", "Erreur lors de la modification.");
+                        ViderCmdLivresInfos();
+                        CacherValider();
+                        break;
+
+                    default:
+                        MessageBox.Show("Veuillez sélectionner une opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Méthode pour exécuter une opération et afficher un message selon le résultat.
+        /// </summary>
+        private void ExecuterOperation(Func<bool> operation, string messageSucces, string messageErreur)
+        {
+            try
+            {
+                bool result = operation();
+                MessageBox.Show(result ? messageSucces : messageErreur, result ? "Succès" : "Erreur", MessageBoxButtons.OK, result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur inattendue est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void btnLivresComAnnuler_Click(object sender, EventArgs e)
         {
+            LabelCrudTitre(null, false);
+            VisibleGroupBoxCommandeLivre();
+            DesactiverDataGridView(dgvLivresComListe, false);
+            DesactiverDataGridView(dgvLivresComListeCom, false);
+            RendreBoutonsVisiblesOuInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter, false);
+
 
         }
+
+
+
+
+        #endregion
+
     }
 }
 

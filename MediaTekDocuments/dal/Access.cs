@@ -7,6 +7,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using System.Linq;
+using System.Web;
 
 namespace MediaTekDocuments.dal
 {
@@ -28,16 +29,19 @@ namespace MediaTekDocuments.dal
         /// </summary>
         private readonly ApiRest api = null;
         /// <summary>
-        /// méthode HTTP pour select
+        /// méthode HTTP pour SELECT
         /// </summary>
         private const string GET = "GET";
         /// <summary>
-        /// méthode HTTP pour insert
+        /// méthode HTTP pour INSERT
         /// </summary>
         private const string POST = "POST";
         /// <summary>
-        /// méthode HTTP pour update
-
+        /// méthode HTTP pour UPDATE
+        private const string PUT = "PUT";
+        /// <summary>
+        /// méthode HTTP pour DELETE
+        private const string DELETE = "PUT";
         /// <summary>
         /// Méthode privée pour créer un singleton
         /// initialise l'accès à l'API
@@ -195,6 +199,7 @@ namespace MediaTekDocuments.dal
             List<T> liste = new List<T>();
             try
             {
+                Console.WriteLine("Voila la requete cool :"+ methode + message+ parametres);
                 JObject retour = api.RecupDistant(methode, message, parametres);
                 // extraction du code retourné
                 String code = (String)retour["code"];
@@ -275,13 +280,44 @@ namespace MediaTekDocuments.dal
             return lesCommandesLivres;
         }
 
-        public bool CreerCommandeDocument(CommandeDocument detailsCommande)
+        public bool CreerCommandeDocument(CommandeDocument insertCommande)
         {
-            string jsonDetailCommande = JsonConvert.SerializeObject(detailsCommande, new CustomDateTimeConverter());
-            Console.WriteLine(uriApi + "commandeDocAjout?champs=" + jsonDetailCommande);
+            string jsonDetailCommande = JsonConvert.SerializeObject(insertCommande, new CustomDateTimeConverter());
+            Console.WriteLine(jsonDetailCommande);
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandeDocAjout", "champs=" + jsonDetailCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool ModifierCommandeDocument(CommandeDocument updateCommande)
+        {
+            string jsonDetailCommande = JsonConvert.SerializeObject(updateCommande, new CustomDateTimeConverter());
+            Console.WriteLine(uriApi + "commandeDocModifier?champs=" + jsonDetailCommande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(PUT, "commandeDocModifier", "champs=" + jsonDetailCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+        public bool SupprimerCommandeDocument(CommandeDocument deleteCommande)
+        {
+            string jsonDetailCommande = JsonConvert.SerializeObject(deleteCommande, new CustomDateTimeConverter());
+            Console.WriteLine(uriApi + "commandeDocSupprimer?champs=" + jsonDetailCommande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeDocSupprimer", "champs=" + jsonDetailCommande);
                 return (liste != null);
             }
             catch (Exception ex)

@@ -129,13 +129,31 @@ namespace MediaTekDocuments.controller
         #endregion
 
         /// <summary>
-        /// Crée un détail de commande dans la base de données
+        /// AJOUTE une commande dans la base de données
         /// </summary>
         /// <param name="detailsCommande">L'objet DetailsCommande à insérer</param>
         /// <returns>Création du details</returns>
         public bool CreerCommandeDocument(CommandeDocument detailsCommande)
         {
             return access.CreerCommandeDocument(detailsCommande);
+        }
+        /// <summary>
+        /// MODIFIE une commande dans la base de données
+        /// </summary>
+        /// <param name="detailsCommande">L'objet DetailsCommande à insérer</param>
+        /// <returns>Création du details</returns>
+        public bool ModifierCommandeDocument(CommandeDocument detailsCommande)
+        {
+            return access.ModifierCommandeDocument(detailsCommande);
+        }
+        /// <summary>
+        /// SUPPRIME une commande dans la base de données
+        /// </summary>
+        /// <param name="detailsCommande">L'objet DetailsCommande à insérer</param>
+        /// <returns>Création du details</returns>
+        public bool SupprimerCommandeDocument(CommandeDocument detailsCommande)
+        {
+            return access.SupprimerCommandeDocument(detailsCommande);
         }
     }
 }
