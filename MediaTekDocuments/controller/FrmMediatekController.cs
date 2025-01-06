@@ -94,7 +94,6 @@ namespace MediaTekDocuments.controller
             return access.GetAllPublics();
         }
 
-
         /// <summary>
         /// récupère les exemplaires d'une revue
         /// </summary>
@@ -125,9 +124,6 @@ namespace MediaTekDocuments.controller
         {
             return access.GetCommandesLivres(idLivre);
         }
-
-        #endregion
-
         /// <summary>
         /// AJOUTE une commande dans la base de données
         /// </summary>
@@ -155,5 +151,20 @@ namespace MediaTekDocuments.controller
         {
             return access.SupprimerCommandeDocument(detailsCommande);
         }
+
+        #endregion
+
+        #region Les Abonnements
+        /// <summary>
+        /// Récupère les abonnements d'une revue
+        /// </summary>
+        /// <param name="idLivre">id du livre concernée</param>
+        /// <returns></returns>
+        public List<Abonnement> GetCommandesAbonnement(string idRevue)
+        {
+            return access.GetCommandesAbonnement(idRevue);
+        }
+        #endregion
+
     }
 }

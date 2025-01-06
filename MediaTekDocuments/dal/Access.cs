@@ -199,7 +199,6 @@ namespace MediaTekDocuments.dal
             List<T> liste = new List<T>();
             try
             {
-                Console.WriteLine("Voila la requete cool :"+ methode + message+ parametres);
                 JObject retour = api.RecupDistant(methode, message, parametres);
                 // extraction du code retourné
                 String code = (String)retour["code"];
@@ -209,8 +208,10 @@ namespace MediaTekDocuments.dal
                     if (methode.Equals(GET))
                     {
                         String resultString = JsonConvert.SerializeObject(retour["result"]);
+                        Console.WriteLine("RETOUR API :" + resultString);
                         // construction de la liste d'objets à partir du retour de l'api
                         liste = JsonConvert.DeserializeObject<List<T>>(resultString, new CustomBooleanJsonConverter());
+
                     }
                 }
                 else
@@ -326,5 +327,19 @@ namespace MediaTekDocuments.dal
             }
             return false;
         }
+
+        /// <summary>
+        /// Retourne les commandes d'un abonnement
+        /// </summary>
+        /// <param name="idRevue"></param>
+        /// <returns></returns>
+        public List<Abonnement> GetCommandesAbonnement(string idRevue)
+        {
+            String jsonIdDocument = convertToJson("idRevue", idRevue);
+            List<Abonnement> lesCommandesAbonnement = TraitementRecup<Abonnement>(GET, "commandeabonnementinfo/" + jsonIdDocument, null);
+
+            return lesCommandesAbonnement;
+        }
+        
     }
 }
