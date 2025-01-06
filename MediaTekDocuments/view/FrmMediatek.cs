@@ -2033,6 +2033,7 @@ namespace MediaTekDocuments.view
                 AfficheCommandeDvdInfo(commande);
             }
         }
+
         private void btnDvdComModifier_Click(object sender, EventArgs e)
         {
             Mode = "Modification";
@@ -2223,7 +2224,7 @@ namespace MediaTekDocuments.view
         }
         private void AfficheCommandeAbonnementInfo(Abonnement commande)
         {
-            if (dgvDvdComListeCom.Rows.Count > 0 && commande != null)
+            if (dgvRevueComListeCom.Rows.Count > 0 && commande != null)
             {
                 // Remplir les champs avec les info de la commande sélectionnée
                 txbAbonnementComNbCommande.Text = commande.Id.ToString();
@@ -2238,7 +2239,54 @@ namespace MediaTekDocuments.view
                 ViderAbonnementDvdInfos();
             }
         }
+        private void LabelCrudTitreAbonnement(string mode, bool cacher)
+        {
+            // Visibilité du texte
+            lblCrudTitreAbonnement.Visible = cacher;
 
+            switch (mode)
+            {
+                case "Ajout":
+                    lblCrudTitreAbonnement.Text = "Êtes-vous sûr de réaliser cet ajout ?";
+                    break;
+                case "Suppression":
+                    lblCrudTitreAbonnement.Text = "Êtes-vous sûr de réaliser cette suppression ?";
+                    break;
+                case "Modification":
+                    lblCrudTitreAbonnement.Text = "Êtes-vous sûr de réaliser cette modification ?";
+                    break;
+                default:
+                    lblCrudTitreAbonnement.Text = "";
+                    break;
+            }
+        }
+        private void VisibleCommandeAbonnement()
+        {
+            label89.Visible = false;
+            txbAbonnementComNbCommande.Visible = false;
+            txbAbonnementComMontant.ReadOnly = false;
+            dtpAbonnementComDateCommande.Enabled = true;
+            dtpFinAbonnementDateCommande.Enabled = true;
+            txbComNumRevue.ReadOnly = false;
+        }
+        private void VisibleGroupBoxCommandeAbonnement()
+        {
+            label89.Visible = true;
+            txbAbonnementComNbCommande.Visible = true;
+            txbAbonnementComNbCommande.ReadOnly = true;
+            txbAbonnementComMontant.ReadOnly = true;
+            dtpAbonnementComDateCommande.Enabled = false;
+            dtpFinAbonnementDateCommande.Enabled = false;
+            txbComNumRevue.ReadOnly = true;
+        }
+        private void CacherValiderAbonnement()
+        {
+            LabelCrudTitreAbonnement(null, false);
+            VisibleGroupBoxCommandeAbonnement();
+            DesactiverDataGridView(dgvCmdRevuesListe, false);
+            DesactiverDataGridView(dgvRevueComListeCom, false);
+            RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, false);
+        }
 
         private void tabCmdRevue_Enter(object sender, EventArgs e)
         {
@@ -2247,8 +2295,8 @@ namespace MediaTekDocuments.view
             RemplirComboCategorie(controller.GetAllPublics(), bdgPublics, cbxCmdRevuesPublic);
             RemplirComboCategorie(controller.GetAllRayons(), bdgRayons, cbxCmdRevuesRayon);
             RemplirCmdRevuesListeComplete();
+            VisibleGroupBoxCommandeAbonnement();
         }
-
         private void txbCmdRevuesTitreRecherche_TextChanged(object sender, EventArgs e)
         {
             if (!txbCmdRevuesTitreRecherche.Text.Equals(""))
@@ -2271,7 +2319,6 @@ namespace MediaTekDocuments.view
                 }
             }
         }
-
         private void btnCmdRevuesNumRecherche_Click(object sender, EventArgs e)
         {
             if (!txbCmdRevuesNumRecherche.Text.Equals(""))
@@ -2297,7 +2344,6 @@ namespace MediaTekDocuments.view
                 RemplirCmdRevuesListeComplete();
             }
         }
-
         private void cbxCmdRevuesGenres_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbxCmdRevuesGenres.SelectedIndex >= 0)
@@ -2311,7 +2357,6 @@ namespace MediaTekDocuments.view
                 cbxCmdRevuesPublic.SelectedIndex = -1;
             }
         }
-
         private void cbxCmdRevuesPublic_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbxCmdRevuesPublic.SelectedIndex >= 0)
@@ -2325,7 +2370,6 @@ namespace MediaTekDocuments.view
                 cbxCmdRevuesGenres.SelectedIndex = -1;
             }
         }
-
         private void cbxCmdRevuesRayon_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbxCmdRevuesRayon.SelectedIndex >= 0)
@@ -2339,22 +2383,18 @@ namespace MediaTekDocuments.view
                 cbxCmdRevuesPublic.SelectedIndex = -1;
             }
         }
-
         private void btnCmdRevuesAnnulGenre_Click(object sender, EventArgs e)
         {
             RemplirCmdRevuesListeComplete();
         }
-
         private void btnCmdRevuesAnnulPublic_Click(object sender, EventArgs e)
         {
             RemplirCmdRevuesListeComplete();
         }
-
         private void btnCmdRevuesAnnulRayon_Click(object sender, EventArgs e)
         {
             RemplirCmdRevuesListeComplete();
         }
-
         private void dgvCmdRevuesListe_SelectionChanged(object sender, EventArgs e)
         {
             if (dgvCmdRevuesListe.CurrentRow != null)
@@ -2368,7 +2408,6 @@ namespace MediaTekDocuments.view
                 RemplirCmdAbonnementCommandes(commandesAssociees);
             }
         }
-
         private void dgvRevueComListeCom_SelectionChanged(object sender, EventArgs e)
         {
             if (dgvRevueComListeCom.CurrentRow != null)
@@ -2378,8 +2417,123 @@ namespace MediaTekDocuments.view
                 AfficheCommandeAbonnementInfo(commande);
             }
         }
+        private void btnAbonnementComAjouter_Click(object sender, EventArgs e)
+        {
+            Mode = "Ajout";
+            LabelCrudTitreAbonnement(Mode, true);
+            VisibleCommandeAbonnement();
+            RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, true);
+            DesactiverDataGridView(dgvCmdRevuesListe, true);
+            DesactiverDataGridView(dgvRevueComListeCom, true);
+            ViderAbonnementDvdInfos();
+        }
+        private void btnAbonnementComModifier_Click(object sender, EventArgs e)
+        {
+            Mode = "Modification";
+
+            if (!VerifierSelection(dgvRevueComListeCom))
+            {
+                Mode = "";
+            }
+            else
+            {
+                LabelCrudTitreAbonnement(Mode, true);
+                VisibleCommandeAbonnement();
+                RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, true);
+                DesactiverDataGridView(dgvCmdRevuesListe, true);
+                DesactiverDataGridView(dgvRevueComListeCom, true);
+            }
+        }
+        private void btnAbonnementComSupprimer_Click(object sender, EventArgs e)
+        {
+            Mode = "Suppression";
+            if (!VerifierSelection(dgvRevueComListeCom))
+            {
+                Mode = "";
+            }
+            else
+            {
+                LabelCrudTitreAbonnement(Mode, true);
+                RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, true);
+                VisibleCommandeAbonnement();
+            }
+        }
+        private void btnAbonnementComAnnuler_Click(object sender, EventArgs e)
+        {
+            LabelCrudTitreAbonnement(null, false);
+            VisibleGroupBoxCommandeAbonnement();
+            DesactiverDataGridView(dgvCmdRevuesListe, false);
+            DesactiverDataGridView(dgvRevueComListeCom, false);
+            RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, false);
+        }
+
+
+
+
 
         #endregion
+
+        private void btnAbonnementComValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Récupération des données communes
+                DateTime dateCommandeAbonnement = dtpAbonnementComDateCommande.Value;
+                DateTime dateFinAbonnement = dtpFinAbonnementDateCommande.Value;
+                double montant = double.TryParse(txbAbonnementComMontant.Text, out double tempMontant) ? tempMontant : throw new Exception("Montant invalide ou manquant.");
+                string numRevue = txbComNumRevue.Text;
+
+                Abonnement commandeRevue = null;
+
+                // Vérifie le mode sélectionné et crée l'objet `CommandeDocument`
+                switch (Mode)
+                {
+                    case "Ajout":
+
+                        // Valeurs spécifiques à l'ajout
+                        commandeRevue = new Abonnement(null, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
+                        // Affichage dans le MessageBox
+                        ExecuterOperation(() => controller.CreerCommandeAbonnement(commandeRevue), "Commande ajoutée avec succès.", "Erreur lors de l'ajout.");
+                        ViderAbonnementDvdInfos();
+                        CacherValiderAbonnement();
+                        break;
+
+                    case "Suppression":
+                        int idAbonnement = int.TryParse(txbAbonnementComNbCommande.Text, out int tempNbExemplaires) ? tempNbExemplaires : throw new Exception("Identifiant de commande invalide ou manquant.");
+                        commandeRevue = new Abonnement(idAbonnement, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
+
+                        var exemplaires = controller.GetExemplairesRevue(commandeRevue.IdRevue);
+                        bool exemplaireRattache = exemplaires.Any(exemplaire =>Abonnement.ParutionDansAbonnement(commandeRevue.DateCommande, commandeRevue.DateFinAbonnement.Value, exemplaire.DateAchat));
+
+                        if (exemplaireRattache)
+                        {
+                            MessageBox.Show("Impossible de supprimer l'abonnement. Un ou plusieurs exemplaires sont rattachés.");
+                            return;
+                        }
+                        if (controller.SupprimerCommandeAbonnement(commandeRevue))
+                        {
+                            MessageBox.Show("L'abonnement a été supprimé avec succès.");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Erreur lors de la suppression de l'abonnement.");
+                        }
+                        ViderAbonnementDvdInfos();
+                        CacherValiderAbonnement();
+                        break;
+
+                    default:
+                        MessageBox.Show("Veuillez sélectionner une opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        
+        }
+
     }
 }
 

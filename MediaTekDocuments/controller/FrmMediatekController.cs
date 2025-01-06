@@ -164,6 +164,14 @@ namespace MediaTekDocuments.controller
         {
             return access.GetCommandesAbonnement(idRevue);
         }
+        public bool CreerCommandeAbonnement(Abonnement detailsCommande)
+        {
+            return access.CreerCommandeAbonnement(detailsCommande);
+        }
+        public bool SupprimerCommandeAbonnement(Abonnement detailsCommande)
+        {
+            return access.SupprimerCommandeAbonnement(detailsCommande);
+        }
         #endregion
 
     }

@@ -8,13 +8,13 @@ namespace MediaTekDocuments.model
 {
     public class Abonnement
     {
-        public int Id { get;  set;}
+        public int? Id { get;  set;}
         public string IdRevue { get; }
         public DateTime DateCommande { get; }
         public double Montant { get; }
         public DateTime? DateFinAbonnement { get; set; }
 
-        public Abonnement(int idCommande, DateTime dateCommande, double montant, DateTime? dateFinAbonnement, string idRevue)
+        public Abonnement(int? idCommande, DateTime dateCommande, double montant, DateTime? dateFinAbonnement, string idRevue)
         {
             this.Id = idCommande;
             this.IdRevue = idRevue;
@@ -23,9 +23,10 @@ namespace MediaTekDocuments.model
             this.DateFinAbonnement = dateFinAbonnement;
         }
 
-        public static bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateFinAbonnement, DateTime dateAchat)
+        public static bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateFinAbonnement, DateTime dateParution)
         {
-            return dateAchat >= dateCommande && dateAchat <= dateFinAbonnement;
+            return dateParution >= dateCommande && dateParution <= dateFinAbonnement;
         }
+
     }
 }

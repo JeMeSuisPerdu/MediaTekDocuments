@@ -340,6 +340,36 @@ namespace MediaTekDocuments.dal
 
             return lesCommandesAbonnement;
         }
-        
+        public bool CreerCommandeAbonnement(Abonnement insertAbonnementCommande)
+        {
+            string jsonDetailCommande = JsonConvert.SerializeObject(insertAbonnementCommande, new CustomDateTimeConverter());
+            Console.WriteLine(jsonDetailCommande);
+            try
+            {
+                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "commandeAbonnementAjout", "champs=" + jsonDetailCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool SupprimerCommandeAbonnement(Abonnement deleteAbonnementCommande)
+        {
+            string jsonDetailCommande = JsonConvert.SerializeObject(deleteAbonnementCommande, new CustomDateTimeConverter());
+            Console.WriteLine(uriApi + "commandeAbonnementSupprimer?champs=" + jsonDetailCommande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeAbonnementSupprimer", "champs=" + jsonDetailCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
     }
 }
