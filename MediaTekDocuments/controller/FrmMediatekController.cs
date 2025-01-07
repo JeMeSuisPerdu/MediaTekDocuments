@@ -172,6 +172,15 @@ namespace MediaTekDocuments.controller
         {
             return access.SupprimerCommandeAbonnement(detailsCommande);
         }
+
+        public bool ModifierCommandeAbonnement(Abonnement detailsCommande)
+        {
+            return access.ModifierCommandeAbonnement(detailsCommande);
+        }
+        public List<FinAbonnement30Jours> GetListeFinAbonnement(string idAbo)
+        {
+            return access.GetListeFinAbonnement(idAbo);
+        }
         #endregion
 
     }

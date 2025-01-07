@@ -30,8 +30,10 @@ namespace MediaTekDocuments.view
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
+            AfficherAbonnementsFinDans30Jours();
+
         }
-        
+
         /// <summary>
         /// Rempli un des 3 combo (genre, public, rayon)
         /// </summary>
@@ -47,7 +49,6 @@ namespace MediaTekDocuments.view
                 cbx.SelectedIndex = -1;
             }
         }
-
         /// <summary>
         /// Rempli un combo de suivi
         /// </summary>
@@ -62,6 +63,25 @@ namespace MediaTekDocuments.view
             {
                 cbx.SelectedIndex = -1;
             }
+        }
+        /// <summary>
+        /// Renvoie la liste des revues dont l'abonnement se termine dans moins de 30 jours
+        /// </summary>
+        private void AfficherAbonnementsFinDans30Jours()
+        {
+            // Récupère la liste d'abonnements en appelant l'API
+            var abonnementsFinDans30Jours = controller.GetListeFinAbonnement("idAbo");
+
+            string message = "Abonnements se terminant dans 30 jours :\n\n";
+
+            foreach (var abonnement in abonnementsFinDans30Jours)
+            {
+                string dateFinAbonnement = abonnement.DateFinAbonnement.ToString("dd/MM/yyyy");
+                message += $"Titre : {abonnement.Titre} - Date de fin : {dateFinAbonnement}\n";
+            }
+
+            // Affichage du message dans un MessageBox
+            MessageBox.Show(message, "Alerte Abonnement", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -2288,6 +2308,7 @@ namespace MediaTekDocuments.view
             RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, false);
         }
 
+
         private void tabCmdRevue_Enter(object sender, EventArgs e)
         {
             lesRevues = controller.GetAllRevues();
@@ -2466,13 +2487,6 @@ namespace MediaTekDocuments.view
             DesactiverDataGridView(dgvRevueComListeCom, false);
             RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, false);
         }
-
-
-
-
-
-        #endregion
-
         private void btnAbonnementComValider_Click(object sender, EventArgs e)
         {
             try
@@ -2485,7 +2499,7 @@ namespace MediaTekDocuments.view
 
                 Abonnement commandeRevue = null;
 
-                // Vérifie le mode sélectionné et crée l'objet `CommandeDocument`
+                // Vérifie le mode sélectionné et crée l'objet `Abonnement`
                 switch (Mode)
                 {
                     case "Ajout":
@@ -2499,7 +2513,7 @@ namespace MediaTekDocuments.view
                         break;
 
                     case "Suppression":
-                        int idAbonnement = int.TryParse(txbAbonnementComNbCommande.Text, out int tempNbExemplaires) ? tempNbExemplaires : throw new Exception("Identifiant de commande invalide ou manquant.");
+                        int idAbonnement = int.TryParse(txbAbonnementComNbCommande.Text, out int tempIdAbonnement) ? tempIdAbonnement : throw new Exception("Identifiant de commande invalide ou manquant.");
                         commandeRevue = new Abonnement(idAbonnement, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
 
                         var exemplaires = controller.GetExemplairesRevue(commandeRevue.IdRevue);
@@ -2521,7 +2535,14 @@ namespace MediaTekDocuments.view
                         ViderAbonnementDvdInfos();
                         CacherValiderAbonnement();
                         break;
+                    case "Modification":
 
+                        int idAbonnementModif = int.TryParse(txbAbonnementComNbCommande.Text, out int tempIdAbonnementModif) ? tempIdAbonnementModif : throw new Exception("Identifiant d'abonnement invalide ou manquant.");
+                        commandeRevue = new Abonnement(idAbonnementModif, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
+                        ExecuterOperation(() => controller.ModifierCommandeAbonnement(commandeRevue), "Abonnement modifiée avec succès.", "Erreur lors de la modification.");
+                        ViderAbonnementDvdInfos();
+                        CacherValiderAbonnement();
+                        break;
                     default:
                         MessageBox.Show("Veuillez sélectionner une opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
@@ -2533,6 +2554,11 @@ namespace MediaTekDocuments.view
             }
         
         }
+        #endregion
+
+
+
+
 
     }
 }

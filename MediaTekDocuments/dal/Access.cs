@@ -371,5 +371,31 @@ namespace MediaTekDocuments.dal
             }
             return false;
         }
+
+        public bool ModifierCommandeAbonnement(Abonnement updateCommande)
+        {
+            string jsonDetailCommande = JsonConvert.SerializeObject(updateCommande, new CustomDateTimeConverter());
+            Console.WriteLine(uriApi + "commandeAbonnementModifier?champs=" + jsonDetailCommande);
+            try
+            {
+                List<Abonnement> liste = TraitementRecup<Abonnement>(PUT, "commandeAbonnementModifier", "champs=" + jsonDetailCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public List<FinAbonnement30Jours> GetListeFinAbonnement(string idAbonnement)
+        {
+            String jsonIdDocument = convertToJson("idAbo", idAbonnement);
+            // TraitementRecup devra maintenant retourner un dictionnaire ou une collection
+            List<FinAbonnement30Jours> laListeFinAbonnement = TraitementRecup<FinAbonnement30Jours>(GET, "infolistefinabonnement/"+ jsonIdDocument, null);
+
+            return laListeFinAbonnement;
+        }
+
     }
 }
