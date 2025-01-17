@@ -7,7 +7,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using System.Linq;
-using System.Web;
 
 namespace MediaTekDocuments.dal
 {
@@ -199,6 +198,7 @@ namespace MediaTekDocuments.dal
             List<T> liste = new List<T>();
             try
             {
+                Console.WriteLine($"PREPARATION API : Méthode={methode}, Message={message}, Paramètres={parametres}");
                 JObject retour = api.RecupDistant(methode, message, parametres);
                 // extraction du code retourné
                 String code = (String)retour["code"];
@@ -397,5 +397,12 @@ namespace MediaTekDocuments.dal
             return laListeFinAbonnement;
         }
 
+        public List<Utilisateur> GetUserInfo(Utilisateur utilisateur)
+        {
+            string jsonUtilisateur = JsonConvert.SerializeObject(utilisateur);
+            Console.WriteLine(uriApi + "infoUser/" + jsonUtilisateur);
+                List<Utilisateur> liste = TraitementRecup<Utilisateur>(GET, "infoUser/" + jsonUtilisateur, null);
+                return liste;
+        }
     }
 }

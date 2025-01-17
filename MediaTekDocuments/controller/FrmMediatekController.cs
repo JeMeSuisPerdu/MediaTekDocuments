@@ -182,6 +182,12 @@ namespace MediaTekDocuments.controller
             return access.GetListeFinAbonnement(idAbo);
         }
         #endregion
+        #region Utilisateur
+        public List<Utilisateur> GetUserInfo(Utilisateur infoUser)
+        {
+            return access.GetUserInfo(infoUser);
 
+        }
+        #endregion
     }
 }

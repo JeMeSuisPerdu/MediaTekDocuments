@@ -22,7 +22,6 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgRayons = new BindingSource();
         private readonly BindingSource bdgSuivis= new BindingSource();
 
-
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
@@ -30,8 +29,16 @@ namespace MediaTekDocuments.view
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
-            AfficherAbonnementsFinDans30Jours();
+        }
+        public void CacherOnglet()
+        {
+            TabPage tabCmdLivreToHide = tabOngletsApplication.TabPages["tabCmdLivre"];
+            TabPage tabCmdDvdToHide = tabOngletsApplication.TabPages["tabCmdDvd"];
+            TabPage tabCmdRevueToHide = tabOngletsApplication.TabPages["tabCmdRevue"];
 
+            tabOngletsApplication.TabPages.Remove(tabCmdLivreToHide);
+            tabOngletsApplication.TabPages.Remove(tabCmdDvdToHide);
+            tabOngletsApplication.TabPages.Remove(tabCmdRevueToHide);
         }
 
         /// <summary>
@@ -67,7 +74,7 @@ namespace MediaTekDocuments.view
         /// <summary>
         /// Renvoie la liste des revues dont l'abonnement se termine dans moins de 30 jours
         /// </summary>
-        private void AfficherAbonnementsFinDans30Jours()
+        public void AfficherAbonnementsFinDans30Jours()
         {
             // Récupère la liste d'abonnements en appelant l'API
             var abonnementsFinDans30Jours = controller.GetListeFinAbonnement("idAbo");
@@ -83,7 +90,6 @@ namespace MediaTekDocuments.view
             // Affichage du message dans un MessageBox
             MessageBox.Show(message, "Alerte Abonnement", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
         /// <summary>
         /// Rempli un combo d'etat
         /// </summary>
@@ -99,6 +105,10 @@ namespace MediaTekDocuments.view
                 cbx.SelectedIndex = -1;
             }
         }
+
+
+
+
 
         #endregion
 
@@ -2186,7 +2196,6 @@ namespace MediaTekDocuments.view
 
         }
         #endregion
-
 
         #region Onglet Abonnement
         private void RemplirCmdRevuesListe(List<Revue> revues)
