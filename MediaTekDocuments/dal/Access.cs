@@ -18,7 +18,7 @@ namespace MediaTekDocuments.dal
         /// <summary>
         /// adresse de l'API
         /// </summary>
-        private static readonly string uriApi = "http://localhost/rest_mediatekdocuments/";
+        private static readonly string uriApi =  ConfigurationManager.AppSettings["ApiUri"];
         /// <summary>
         /// instance unique de la classe
         /// </summary>
@@ -47,15 +47,22 @@ namespace MediaTekDocuments.dal
         /// </summary>
         private Access()
         {
-            String authenticationString;
             try
             {
-                authenticationString = "admin:adminpwd";
+                string username = ConfigurationManager.AppSettings["ApiUsername"];
+                string password = ConfigurationManager.AppSettings["ApiPassword"];
+
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(uriApi))
+                {
+                    throw new Exception("API credentials or URI are missing in the configuration file.");
+                }
+
+                string authenticationString = $"{username}:{password}";
                 api = ApiRest.GetInstance(uriApi, authenticationString);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Error: {e.Message}");
                 Environment.Exit(0);
             }
         }
