@@ -7,7 +7,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using System.Linq;
-
+using Serilog;
 namespace MediaTekDocuments.dal
 {
     /// <summary>
@@ -18,7 +18,12 @@ namespace MediaTekDocuments.dal
         /// <summary>
         /// adresse de l'API
         /// </summary>
-        private static readonly string uriApi = "http://localhost/rest_mediatekdocuments/";
+        private static readonly string uriApi = ConfigurationManager.AppSettings["ApiUri"];
+        /// <summary>
+        /// constante pour la chaîne 'champs='
+        /// </summary>
+        private const string ChampsQueryParam = "champs=";
+
         /// <summary>
         /// instance unique de la classe
         /// </summary>
@@ -47,17 +52,39 @@ namespace MediaTekDocuments.dal
         /// </summary>
         private Access()
         {
-            String authenticationString;
             try
             {
-                authenticationString = "admin:adminpwd";
+                string username = ConfigurationManager.AppSettings["ApiUsername"];
+                string password = ConfigurationManager.AppSettings["ApiPassword"];
+
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(uriApi))
+                {
+                    throw new ConfigurationErrorsException("Le mot de passe de l'API est manquant dans le fichier de configuration.");
+                }
+
+                string authenticationString = $"{username}:{password}";
                 api = ApiRest.GetInstance(uriApi, authenticationString);
+
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Error: {e.Message}");
                 Environment.Exit(0);
             }
+        }
+
+        // Initialisation des logs UNE SEULE FOIS
+        static Access()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("logs/errorlog.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                .WriteTo.EventLog("MediaTekDocuments", manageEventSource: true, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal)
+                .CreateLogger();
+
+            Log.Information("Initialisation de Serilog terminée.");
         }
 
         /// <summary>
@@ -66,6 +93,7 @@ namespace MediaTekDocuments.dal
         /// <returns>instance unique de la classe</returns>
         public static Access GetInstance()
         {
+
             if (instance == null)
             {
                 instance = new Access();
@@ -173,7 +201,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
             try
             {
-                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", "champs=" + jsonExemplaire);
+                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", ChampsQueryParam + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -194,38 +222,36 @@ namespace MediaTekDocuments.dal
         /// <returns>liste d'objets récupérés (ou liste vide)</returns>
         private List<T> TraitementRecup<T>(String methode, String message, String parametres)
         {
-            // trans
             List<T> liste = new List<T>();
             try
             {
-                Console.WriteLine($"PREPARATION API : Méthode={methode}, Message={message}, Paramètres={parametres}");
+                // Remplacer l'interpolation de chaîne par des paramètres
+                Log.Information("PREPARATION API : Méthode={Methode}, Message={Message}, Paramètres={Parametres}", methode, message, parametres);
                 JObject retour = api.RecupDistant(methode, message, parametres);
-                // extraction du code retourné
+
                 String code = (String)retour["code"];
                 if (code.Equals("200"))
                 {
-                    // dans le cas du GET (select), récupération de la liste d'objets
                     if (methode.Equals(GET))
                     {
                         String resultString = JsonConvert.SerializeObject(retour["result"]);
-                        Console.WriteLine("RETOUR API :" + resultString);
-                        // construction de la liste d'objets à partir du retour de l'api
+                        Log.Information("RETOUR API : {ResultString}", resultString);
                         liste = JsonConvert.DeserializeObject<List<T>>(resultString, new CustomBooleanJsonConverter());
-
                     }
                 }
                 else
                 {
-                    Console.WriteLine("code erreur = " + code + " message = " + (String)retour["message"]);
+                    Log.Error("Code erreur : {Code} Message : {Message}", code, (String)retour["message"]);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Erreur lors de l'accès à l'API : " + e.Message);
+                Log.Error("Erreur lors de l'accès à l'API : {ErrorMessage}", e.Message);
                 Environment.Exit(0);
             }
             return liste;
         }
+
 
         /// <summary>
         /// Convertit en json un couple nom/valeur
@@ -276,24 +302,49 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<CommandeDocument> GetCommandesLivres(string idLivre)
         {
+            Log.Information("Tentative de récupération des commandes pour le livre avec l'ID : {IdLivre}", idLivre);
+
             String jsonIdDocument = convertToJson("idLivreDvd", idLivre);
-            List<CommandeDocument> lesCommandesLivres = TraitementRecup<CommandeDocument>(GET, "infocommandedocument/" + jsonIdDocument,null);
+            List<CommandeDocument> lesCommandesLivres = TraitementRecup<CommandeDocument>(GET, "infocommandedocument/" + jsonIdDocument, null);
+
+            if (lesCommandesLivres.Count > 0)
+            {
+                Log.Information("Nombre de commandes récupérées pour le livre ID {IdLivre}: {CommandeCount}", idLivre, lesCommandesLivres.Count);
+            }
+            else
+            {
+                Log.Warning("Aucune commande trouvée pour le livre avec l'ID {IdLivre}", idLivre);
+            }
+
             return lesCommandesLivres;
         }
+
 
         public bool CreerCommandeDocument(CommandeDocument insertCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(insertCommande, new CustomDateTimeConverter());
             Console.WriteLine(jsonDetailCommande);
+
+            Log.Information("Tentative de création de la commande document.");
+
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandeDocAjout", "champs=" + jsonDetailCommande);
-                return (liste != null);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandeDocAjout", ChampsQueryParam + jsonDetailCommande);
+                if (liste != null && liste.Count > 0)
+                {
+                    Log.Information("Commande document créée avec succès.");
+                    return true;
+                }
+                else
+                {
+                    Log.Warning("Échec de la création de la commande document. Aucune donnée retournée.");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error("Erreur lors de la création de la commande document : {Message} ", ex.Message);
             }
+
             return false;
         }
 
@@ -301,58 +352,101 @@ namespace MediaTekDocuments.dal
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(updateCommande, new CustomDateTimeConverter());
             Console.WriteLine(uriApi + "commandeDocModifier?champs=" + jsonDetailCommande);
+
+            Log.Information("Tentative de modification de la commande document.");
+
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(PUT, "commandeDocModifier", "champs=" + jsonDetailCommande);
-                return (liste != null);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(PUT, "commandeDocModifier", ChampsQueryParam + jsonDetailCommande);
+                if (liste != null && liste.Count > 0)
+                {
+                    Log.Information("Commande document modifiée avec succès.");
+                    return true;
+                }
+                else
+                {
+                    Log.Warning("Échec de la modification de la commande document. Aucune donnée retournée.");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error("Erreur lors de la modification de la commande document : {Message} ", ex.Message);
             }
+
             return false;
         }
         public bool SupprimerCommandeDocument(CommandeDocument deleteCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(deleteCommande, new CustomDateTimeConverter());
             Console.WriteLine(uriApi + "commandeDocSupprimer?champs=" + jsonDetailCommande);
+
+            Log.Information("Tentative de suppression de la commande document.");
+
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeDocSupprimer", "champs=" + jsonDetailCommande);
-                return (liste != null);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeDocSupprimer", ChampsQueryParam + jsonDetailCommande);
+                if (liste != null && liste.Count > 0)
+                {
+                    Log.Information("Commande document supprimée avec succès.");
+                    return true;
+                }
+                else
+                {
+                    Log.Warning("Échec de la suppression de la commande document. Aucune donnée retournée.");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error("Erreur lors de la suppression de la commande document : {Message} ", ex.Message);
             }
+
             return false;
         }
 
-        /// <summary>
-        /// Retourne les commandes d'un abonnement
-        /// </summary>
-        /// <param name="idRevue"></param>
-        /// <returns></returns>
         public List<Abonnement> GetCommandesAbonnement(string idRevue)
         {
+            Log.Information("Tentative de récupération des commandes pour l'abonnement avec l'ID revue : {IdRevue} ", idRevue);
+
             String jsonIdDocument = convertToJson("idRevue", idRevue);
             List<Abonnement> lesCommandesAbonnement = TraitementRecup<Abonnement>(GET, "commandeabonnementinfo/" + jsonIdDocument, null);
 
+            if (lesCommandesAbonnement != null && lesCommandesAbonnement.Count > 0)
+            {
+                Log.Information("Commandes d'abonnement récupérées pour l'ID revue : {IdRevue} ", idRevue);
+            }
+            else
+            {
+                Log.Warning("Aucune commande trouvée pour l'abonnement avec l'ID revue : {IdRevue} ", idRevue);
+            }
+
             return lesCommandesAbonnement;
         }
+
         public bool CreerCommandeAbonnement(Abonnement insertAbonnementCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(insertAbonnementCommande, new CustomDateTimeConverter());
             Console.WriteLine(jsonDetailCommande);
+
+            Log.Information("Tentative de création de la commande d'abonnement.");
+
             try
             {
-                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "commandeAbonnementAjout", "champs=" + jsonDetailCommande);
-                return (liste != null);
+                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "commandeAbonnementAjout", ChampsQueryParam + jsonDetailCommande);
+                if (liste != null && liste.Count > 0)
+                {
+                    Log.Information("Commande d'abonnement créée avec succès.");
+                    return true;
+                }
+                else
+                {
+                    Log.Warning("Échec de la création de la commande d'abonnement. Aucune donnée retournée.");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error("Erreur lors de la création de la commande d'abonnement : {Message}", ex.Message);
             }
+
             return false;
         }
 
@@ -360,15 +454,27 @@ namespace MediaTekDocuments.dal
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(deleteAbonnementCommande, new CustomDateTimeConverter());
             Console.WriteLine(uriApi + "commandeAbonnementSupprimer?champs=" + jsonDetailCommande);
+
+            Log.Information("Tentative de suppression de la commande d'abonnement.");
+
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeAbonnementSupprimer", "champs=" + jsonDetailCommande);
-                return (liste != null);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeAbonnementSupprimer", ChampsQueryParam + jsonDetailCommande);
+                if (liste != null && liste.Count > 0)
+                {
+                    Log.Information("Commande d'abonnement supprimée avec succès.");
+                    return true;
+                }
+                else
+                {
+                    Log.Warning("Échec de la suppression de la commande d'abonnement. Aucune donnée retournée.");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error("Erreur lors de la suppression de la commande d'abonnement : {Message}", ex.Message);
             }
+
             return false;
         }
 
@@ -376,23 +482,47 @@ namespace MediaTekDocuments.dal
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(updateCommande, new CustomDateTimeConverter());
             Console.WriteLine(uriApi + "commandeAbonnementModifier?champs=" + jsonDetailCommande);
+
+            Log.Information("Tentative de modification de la commande d'abonnement.");
+
             try
             {
-                List<Abonnement> liste = TraitementRecup<Abonnement>(PUT, "commandeAbonnementModifier", "champs=" + jsonDetailCommande);
-                return (liste != null);
+                List<Abonnement> liste = TraitementRecup<Abonnement>(PUT, "commandeAbonnementModifier", ChampsQueryParam + jsonDetailCommande);
+                if (liste != null && liste.Count > 0)
+                {
+                    Log.Information("Commande d'abonnement modifiée avec succès.");
+                    return true;
+                }
+                else
+                {
+                    Log.Warning("Échec de la modification de la commande d'abonnement. Aucune donnée retournée.");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error("Erreur lors de la modification de la commande d'abonnement : {Message}", ex.Message);
             }
+
             return false;
         }
+
 
         public List<FinAbonnement30Jours> GetListeFinAbonnement(string idAbonnement)
         {
             String jsonIdDocument = convertToJson("idAbo", idAbonnement);
-            // TraitementRecup devra maintenant retourner un dictionnaire ou une collection
-            List<FinAbonnement30Jours> laListeFinAbonnement = TraitementRecup<FinAbonnement30Jours>(GET, "infolistefinabonnement/"+ jsonIdDocument, null);
+
+            Log.Information("Tentative de récupération de la liste des fins d'abonnement pour l'ID d'abonnement : {IdAbonnement}", idAbonnement);
+
+            List<FinAbonnement30Jours> laListeFinAbonnement = TraitementRecup<FinAbonnement30Jours>(GET, "infolistefinabonnement/" + jsonIdDocument, null);
+
+            if (laListeFinAbonnement != null && laListeFinAbonnement.Count > 0)
+            {
+                Log.Information("Liste des fins d'abonnement récupérée avec succès. Nombre d'éléments : {NombreElements}", laListeFinAbonnement.Count);
+            }
+            else
+            {
+                Log.Warning("Aucune fin d'abonnement trouvée pour l'ID d'abonnement : {IdAbonnement}", idAbonnement);
+            }
 
             return laListeFinAbonnement;
         }
@@ -400,9 +530,22 @@ namespace MediaTekDocuments.dal
         public List<Utilisateur> GetUserInfo(Utilisateur utilisateur)
         {
             string jsonUtilisateur = JsonConvert.SerializeObject(utilisateur);
-            Console.WriteLine(uriApi + "infoUser/" + jsonUtilisateur);
-                List<Utilisateur> liste = TraitementRecup<Utilisateur>(GET, "infoUser/" + jsonUtilisateur, null);
-                return liste;
+
+            Log.Information("Tentative de récupération des informations pour l'utilisateur : {Utilisateur}", jsonUtilisateur);
+
+            List<Utilisateur> liste = TraitementRecup<Utilisateur>(GET, "infoUser/" + jsonUtilisateur, null);
+
+            if (liste != null && liste.Count > 0)
+            {
+                Log.Information("Informations utilisateur récupérées avec succès. Nombre d'éléments : {NombreElements}", liste.Count);
+            }
+            else
+            {
+                Log.Warning("Aucune information utilisateur trouvée pour : {Utilisateur}", jsonUtilisateur);
+            }
+
+            return liste;
         }
+
     }
 }

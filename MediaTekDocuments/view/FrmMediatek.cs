@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.IO;
+using System.Text;
 
 namespace MediaTekDocuments.view
 
@@ -20,8 +21,21 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgGenres = new BindingSource();
         private readonly BindingSource bdgPublics = new BindingSource();
         private readonly BindingSource bdgRayons = new BindingSource();
-        private readonly BindingSource bdgSuivis= new BindingSource();
-
+        private const string IdRayonColumn = "idRayon";
+        private const string IdCommandeInvalide = "ID commande invalide.";
+        private const string DateCommandeColumnName = "DateCommande";
+        private const string IdGenreColumnName = "idGenre";
+        private const string Modification = "Modification";
+        private const string Suppression = "Suppression";
+        private const string Ajout = "Ajout";
+        private const string Annulee = "Annulée";
+        private const string NbExemplaire = "NbExemplaire";
+        private const string Montant = "Montant";
+        private const string idPublic = "idPublic";
+        private const string Erreur = "Erreur";
+        private const string NumeroIntrouvable = "numéro introuvable";
+        private const string Titre = "titre";
+        private const string UneImage = "image";
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
@@ -79,13 +93,19 @@ namespace MediaTekDocuments.view
             // Récupère la liste d'abonnements en appelant l'API
             var abonnementsFinDans30Jours = controller.GetListeFinAbonnement("idAbo");
 
-            string message = "Abonnements se terminant dans 30 jours :\n\n";
+            // Initialisation du StringBuilder pour construire le message
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.AppendLine("Abonnements se terminant dans 30 jours :\n");
 
+            // Ajout des informations des abonnements
             foreach (var abonnement in abonnementsFinDans30Jours)
             {
                 string dateFinAbonnement = abonnement.DateFinAbonnement.ToString("dd/MM/yyyy");
-                message += $"Titre : {abonnement.Titre} - Date de fin : {dateFinAbonnement}\n";
+                messageBuilder.AppendLine($"Titre : {abonnement.Titre} - Date de fin : {dateFinAbonnement}");
             }
+
+            // Conversion du StringBuilder en chaîne
+            string message = messageBuilder.ToString();
 
             // Affichage du message dans un MessageBox
             MessageBox.Show(message, "Alerte Abonnement", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -141,13 +161,13 @@ namespace MediaTekDocuments.view
             bdgLivresListe.DataSource = livres;
             dgvLivresListe.DataSource = bdgLivresListe;
             dgvLivresListe.Columns["isbn"].Visible = false;
-            dgvLivresListe.Columns["idRayon"].Visible = false;
+            dgvLivresListe.Columns[IdRayonColumn].Visible = false;
             dgvLivresListe.Columns["idGenre"].Visible = false;
-            dgvLivresListe.Columns["idPublic"].Visible = false;
-            dgvLivresListe.Columns["image"].Visible = false;
+            dgvLivresListe.Columns[idPublic].Visible = false;
+            dgvLivresListe.Columns[UneImage].Visible = false;
             dgvLivresListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvLivresListe.Columns["id"].DisplayIndex = 0;
-            dgvLivresListe.Columns["titre"].DisplayIndex = 1;
+            dgvLivresListe.Columns[Titre].DisplayIndex = 1;
         }
 
         /// <summary>
@@ -172,7 +192,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                     RemplirLivresListeComplete();
                 }
             }
@@ -455,14 +475,14 @@ namespace MediaTekDocuments.view
         {
             bdgDvdListe.DataSource = Dvds;
             dgvDvdListe.DataSource = bdgDvdListe;
-            dgvDvdListe.Columns["idRayon"].Visible = false;
-            dgvDvdListe.Columns["idGenre"].Visible = false;
-            dgvDvdListe.Columns["idPublic"].Visible = false;
-            dgvDvdListe.Columns["image"].Visible = false;
+            dgvDvdListe.Columns[IdRayonColumn].Visible = false;
+            dgvDvdListe.Columns[IdGenreColumnName].Visible = false;
+            dgvDvdListe.Columns[idPublic].Visible = false;
+            dgvDvdListe.Columns[UneImage].Visible = false;
             dgvDvdListe.Columns["synopsis"].Visible = false;
             dgvDvdListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvDvdListe.Columns["id"].DisplayIndex = 0;
-            dgvDvdListe.Columns["titre"].DisplayIndex = 1;
+            dgvDvdListe.Columns[Titre].DisplayIndex = 1;
         }
 
         /// <summary>
@@ -487,7 +507,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                     RemplirDvdListeComplete();
                 }
             }
@@ -770,13 +790,13 @@ namespace MediaTekDocuments.view
         {
             bdgRevuesListe.DataSource = revues;
             dgvRevuesListe.DataSource = bdgRevuesListe;
-            dgvRevuesListe.Columns["idRayon"].Visible = false;
-            dgvRevuesListe.Columns["idGenre"].Visible = false;
-            dgvRevuesListe.Columns["idPublic"].Visible = false;
-            dgvRevuesListe.Columns["image"].Visible = false;
+            dgvRevuesListe.Columns[IdRayonColumn].Visible = false;
+            dgvRevuesListe.Columns[IdGenreColumnName].Visible = false;
+            dgvRevuesListe.Columns[idPublic].Visible = false;
+            dgvRevuesListe.Columns[UneImage].Visible = false;
             dgvRevuesListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvRevuesListe.Columns["id"].DisplayIndex = 0;
-            dgvRevuesListe.Columns["titre"].DisplayIndex = 1;
+            dgvRevuesListe.Columns[Titre].DisplayIndex = 1;
         }
 
         /// <summary>
@@ -801,7 +821,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                     RemplirRevuesListeComplete();
                 }
             }
@@ -1109,7 +1129,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                 }
             }
         }
@@ -1239,7 +1259,7 @@ namespace MediaTekDocuments.view
                     }
                     else
                     {
-                        MessageBox.Show("numéro de publication déjà existant", "Erreur");
+                        MessageBox.Show("numéro de publication déjà existant", Erreur);
                     }
                 }
                 catch
@@ -1309,6 +1329,7 @@ namespace MediaTekDocuments.view
 
         #region Onglet Commande de Livre
 
+        private List<CommandeDocument> lesCommandesDocument = new List<CommandeDocument>();
         private string Mode = ""; // Mode (Ajout, Supp, Modif)
         private void VisibleGroupBoxCommandeLivre()
         {
@@ -1392,17 +1413,11 @@ namespace MediaTekDocuments.view
                 cbxLivresComEtat.DisplayMember = "Etat";
                 cbxLivresComEtat.ValueMember = "Id";
                 // trouver l'état de la commande + sélectionner dans le ComboBox
-                var etatCommande = suivisItems.FirstOrDefault(s => s.Id == commande.IdSuivi);
+                var etatCommande = Array.Find(suivisItems, s => s.Id == commande.IdSuivi);
                 if (etatCommande != null)
                 {
                     cbxLivresComEtat.SelectedItem = etatCommande;
                 }
-                // événement pour récupérer l'id suivi lorsque l'état est sélectionné
-                cbxLivresComEtat.SelectedIndexChanged += (sender, e) =>
-                {
-                    var selectedEtat = (Suivi)cbxLivresComEtat.SelectedItem;
-                    int idSuiviSelectionne = selectedEtat.Id;
-                };
             }
 
             else
@@ -1435,13 +1450,13 @@ namespace MediaTekDocuments.view
             bdgLivresListe.DataSource = livres;
             dgvLivresComListe.DataSource = bdgLivresListe;
             dgvLivresComListe.Columns["isbn"].Visible = false;
-            dgvLivresComListe.Columns["idRayon"].Visible = false;
-            dgvLivresComListe.Columns["idGenre"].Visible = false;
-            dgvLivresComListe.Columns["idPublic"].Visible = false;
-            dgvLivresComListe.Columns["image"].Visible = false;
+            dgvLivresComListe.Columns[IdRayonColumn].Visible = false;
+            dgvLivresComListe.Columns[IdGenreColumnName].Visible = false;
+            dgvLivresComListe.Columns[idPublic].Visible = false;
+            dgvLivresComListe.Columns[UneImage].Visible = false;
             dgvLivresComListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvLivresComListe.Columns["id"].DisplayIndex = 0;
-            dgvLivresComListe.Columns["titre"].DisplayIndex = 1;
+            dgvLivresComListe.Columns[Titre].DisplayIndex = 1;
         }
         /// <summary>
         /// Remplit le DataGridView avec les commandes associées au livre sélectionné.
@@ -1453,18 +1468,11 @@ namespace MediaTekDocuments.view
             bdgCommandes.DataSource = commandes;
             dgvLivresComListeCom.DataSource = bdgCommandes;
 
-            // Configurer l'affichage des colonnes
-            dgvLivresComListeCom.Columns["Id"].HeaderText = "ID Commande";
-            dgvLivresComListeCom.Columns["DateCommande"].HeaderText = "Date de Commande";
-            dgvLivresComListeCom.Columns["Montant"].HeaderText = "Montant (€)";
-            dgvLivresComListeCom.Columns["NbExemplaire"].HeaderText = "Exemplaires";
-            dgvLivresComListeCom.Columns["Etat"].HeaderText = "État";
-
             // Réorganiser les colonnes en fonction de leur index d'affichage
             dgvLivresComListeCom.Columns["Id"].DisplayIndex = 0;
             dgvLivresComListeCom.Columns["DateCommande"].DisplayIndex = 1;
-            dgvLivresComListeCom.Columns["Montant"].DisplayIndex = 2;
-            dgvLivresComListeCom.Columns["NbExemplaire"].DisplayIndex = 3;
+            dgvLivresComListeCom.Columns[Montant].DisplayIndex = 2;
+            dgvLivresComListeCom.Columns[NbExemplaire].DisplayIndex = 3;
             dgvLivresComListeCom.Columns["Etat"].DisplayIndex = 4;
 
             dgvLivresComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -1499,21 +1507,21 @@ namespace MediaTekDocuments.view
                 case 1: // En cours
                     combobox.Items.Add(new Suivi(2, "Livrée"));
                     combobox.Items.Add(new Suivi(4, "Relancée"));
-                    combobox.Items.Add(new Suivi(5, "Annulée"));
+                    combobox.Items.Add(new Suivi(5, Annulee));
                     break;
 
                 case 2: // Livrée
                     combobox.Items.Add(new Suivi(3, "Réglée"));
-                    combobox.Items.Add(new Suivi(5, "Annulée"));
+                    combobox.Items.Add(new Suivi(5, Annulee));
                     break;
 
                 case 3: // Réglée
-                    combobox.Items.Add(new Suivi(5, "Annulée"));
+                    combobox.Items.Add(new Suivi(5, Annulee));
                     break;
 
                 case 4: // Relancée
                     combobox.Items.Add(new Suivi(2, "Livrée"));
-                    combobox.Items.Add(new Suivi(5, "Annulée"));
+                    combobox.Items.Add(new Suivi(5, Annulee));
                     break;
 
                 case 5: // Annulée
@@ -1522,7 +1530,7 @@ namespace MediaTekDocuments.view
                     break;
 
                 default:
-                    MessageBox.Show("État inconnu.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("État inconnu.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
             }
 
@@ -1539,13 +1547,13 @@ namespace MediaTekDocuments.view
 
             switch (mode)
             {
-                case "Ajout":
+                case Ajout:
                     lblCrudTitre.Text = "Êtes-vous sûr de réaliser cet ajout ?";
                     break;
-                case "Suppression":
+                case Suppression:
                     lblCrudTitre.Text = "Êtes-vous sûr de réaliser cette suppression ?";
                     break;
-                case "Modification":
+                case Modification:
                     lblCrudTitre.Text = "Êtes-vous sûr de réaliser cette modification ?";
                     break;
                 default:
@@ -1557,7 +1565,7 @@ namespace MediaTekDocuments.view
         {
             if (dgvLivresComListeCom.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vous devez sélectionner une ligne pour réaliser cette opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vous devez sélectionner une ligne pour réaliser cette opération.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false; // Aucun élément sélectionné
             }
             return true; // Une ligne est sélectionnée
@@ -1632,7 +1640,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                     RemplirCmdLivresListeComplete();
                 }
             }
@@ -1650,6 +1658,7 @@ namespace MediaTekDocuments.view
 
                 // Utilise la méthode du contrôleur pour récupérer les commandes associées au livre sélectionné
                 List<CommandeDocument> commandesAssociees = controller.GetCommandesLivres(livreSelectionne.Id);
+                lesCommandesDocument = controller.GetCommandesLivres(livreSelectionne.Id);
 
                 // Remplir la DataGridView avec les commandes récupérées
                 RemplirCmdLivresCommandes(commandesAssociees);
@@ -1668,7 +1677,7 @@ namespace MediaTekDocuments.view
 
         private void btnLivresComModifier_Click(object sender, EventArgs e)
         {
-            Mode = "Modification";
+            Mode = Modification;
 
             if (!VerifierSelection(dgvLivresComListeCom))
             {
@@ -1696,7 +1705,7 @@ namespace MediaTekDocuments.view
         }
         private void btnLivresComSupprimer_Click(object sender, EventArgs e)
         {
-            Mode = "Suppression";
+            Mode = Suppression;
             if (!VerifierSelection(dgvLivresComListeCom))
             {
                 Mode = "";
@@ -1711,7 +1720,7 @@ namespace MediaTekDocuments.view
         }
         private void btnLivresComAjouter_Click(object sender, EventArgs e)
         {
-            Mode = "Ajout";
+            Mode = Ajout;
             LabelCrudTitre(Mode, true);
             VisibleCommandeLivre();
             RendreBoutonsVisiblesOuInvisibles(btnLivresComModifier, btnLivresComSupprimer, btnLivresComAjouter, true);
@@ -1725,8 +1734,18 @@ namespace MediaTekDocuments.view
             {
                 // Récupération des données communes
                 DateTime dateCommande = dtpLivresComDateCommande.Value;
-                double montant = double.TryParse(txbLivresComMontant.Text, out double tempMontant) ? tempMontant : throw new Exception("Montant invalide.");
-                int nbExemplaires = int.TryParse(txbLivresComNbExemplaires.Text, out int tempNbExemplaires) ? tempNbExemplaires : throw new Exception("Nombre d'exemplaires invalide.");
+                double montant;
+                if (!double.TryParse(txbLivresComMontant.Text, out montant))
+                {
+                    MessageBox.Show("Montant invalide.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                int nbExemplaires;
+                if (!int.TryParse(txbLivresComNbExemplaires.Text, out nbExemplaires))
+                {
+                    MessageBox.Show("Nombre d'exemplaires invalide.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 string numLivre = txbLivresComNumLivre.Text;
 
                 CommandeDocument commandeDocument = null;
@@ -1734,7 +1753,7 @@ namespace MediaTekDocuments.view
                 // Vérifie le mode sélectionné et crée l'objet `CommandeDocument`
                 switch (Mode)
                 {
-                    case "Ajout":
+                    case Ajout:
                         // Valeurs spécifiques à l'ajout
                         commandeDocument = new CommandeDocument(null, dateCommande, montant, nbExemplaires, numLivre, 1, "En Cours");
                         ExecuterOperation(() => controller.CreerCommandeDocument(commandeDocument), "Commande ajoutée avec succès.", "Erreur lors de l'ajout.");
@@ -1742,32 +1761,50 @@ namespace MediaTekDocuments.view
                         CacherValider();
                         break;
 
-                    case "Suppression":
+                    case Suppression:
                         // Vérification de la sélection dans le ComboBox
                         if (cbxLivresComEtat.SelectedItem == null)
-                            throw new Exception("Veuillez sélectionner un état de suivi pour la suppression.");
+                        {
+                            MessageBox.Show("Veuillez sélectionner un état de suivi pour la suppression.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
 
                         Suivi suiviSelectionneSupp = (Suivi)cbxLivresComEtat.SelectedItem;
                         int idSuiviSupp = suiviSelectionneSupp.Id;
                         string etatSuiviSupp = suiviSelectionneSupp.Etat;
 
-                        int idCommandeSupp = int.TryParse(txbLivresComNbCommande.Text, out int tempIdCommandeSupp) ? tempIdCommandeSupp : throw new Exception("ID commande invalide.");
+                        int idCommandeSupp;
+                        if (!int.TryParse(txbLivresComNbCommande.Text, out idCommandeSupp))
+                        {
+                            MessageBox.Show(IdCommandeInvalide, Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return; // Ou toute autre gestion d'erreur que vous préférez.
+                        }
                         commandeDocument = new CommandeDocument(idCommandeSupp, dateCommande, montant, nbExemplaires, numLivre, idSuiviSupp, etatSuiviSupp);
                         ExecuterOperation(() => controller.SupprimerCommandeDocument(commandeDocument), "Commande supprimée avec succès.", "Erreur lors de la suppression.");
                         ViderCmdLivresInfos();
                         CacherValider();
                         break;
 
-                    case "Modification":
+                    case Modification:
                         // Vérification de la sélection dans le ComboBox
                         if (cbxLivresComEtat.SelectedItem == null)
-                            throw new Exception("Veuillez sélectionner un état de suivi pour la modification.");
+                        {
+                            MessageBox.Show("Veuillez sélectionner un état de suivi pour la modification.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
 
                         Suivi suiviSelectionneModif = (Suivi)cbxLivresComEtat.SelectedItem;
                         int idSuiviModif = suiviSelectionneModif.Id;
                         string etatSuiviModif = suiviSelectionneModif.Etat;
 
-                        int idCommandeModif = int.TryParse(txbLivresComNbCommande.Text, out int tempIdCommandeModif) ? tempIdCommandeModif : throw new Exception("ID commande invalide.");
+                        int idCommandeModif;
+                        if (!int.TryParse(txbLivresComNbCommande.Text, out idCommandeModif))
+                        {
+                            MessageBox.Show(IdCommandeInvalide, Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                         commandeDocument = new CommandeDocument(idCommandeModif, dateCommande, montant, nbExemplaires, numLivre, idSuiviModif, etatSuiviModif);
                         ExecuterOperation(() => controller.ModifierCommandeDocument(commandeDocument), "Commande modifiée avec succès.", "Erreur lors de la modification.");
                         ViderCmdLivresInfos();
@@ -1775,13 +1812,13 @@ namespace MediaTekDocuments.view
                         break;
 
                     default:
-                        MessageBox.Show("Veuillez sélectionner une opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Veuillez sélectionner une opération.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         /// <summary>
@@ -1792,11 +1829,11 @@ namespace MediaTekDocuments.view
             try
             {
                 bool result = operation();
-                MessageBox.Show(result ? messageSucces : messageErreur, result ? "Succès" : "Erreur", MessageBoxButtons.OK, result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                MessageBox.Show(result ? messageSucces : messageErreur, result ? "Succès" : Erreur, MessageBoxButtons.OK, result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Une erreur inattendue est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Une erreur inattendue est survenue : {ex.Message}", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnLivresComAnnuler_Click(object sender, EventArgs e)
@@ -1809,6 +1846,82 @@ namespace MediaTekDocuments.view
 
 
         }
+
+        private void dgvLivresComListe_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            VideCmdLivresZones();
+            string titreColonne = dgvLivresComListe.Columns[e.ColumnIndex].HeaderText;
+            List<Livre> sortedList = new List<Livre>();
+            switch (titreColonne)
+            {
+                case "Id":
+                    sortedList = lesLivres.OrderBy(o => o.Id).ToList();
+                    break;
+                case "Titre":
+                    sortedList = lesLivres.OrderBy(o => o.Titre).ToList();
+                    break;
+                case "Collection":
+                    sortedList = lesLivres.OrderBy(o => o.Collection).ToList();
+                    break;
+                case "Auteur":
+                    sortedList = lesLivres.OrderBy(o => o.Auteur).ToList();
+                    break;
+                case "Genre":
+                    sortedList = lesLivres.OrderBy(o => o.Genre).ToList();
+                    break;
+                case "Public":
+                    sortedList = lesLivres.OrderBy(o => o.Public).ToList();
+                    break;
+                case "Rayon":
+                    sortedList = lesLivres.OrderBy(o => o.Rayon).ToList();
+                    break;
+            }
+            RemplirCmdLivresListe(sortedList);
+        }
+
+        private void dgvLivresComListeCom_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+                ViderCmdLivresInfos();
+                string titreColonne = dgvLivresComListeCom.Columns[e.ColumnIndex].HeaderText;
+                List<CommandeDocument> sortedList;
+                switch (titreColonne)
+                {
+                    case "Id":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.Id).ToList();
+                        break;
+                    case "DateCommande":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.DateCommande).ToList();
+                        break;
+                    case "Montant":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.Montant).ToList();
+                        break;
+                    case "NbExemplaire":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.NbExemplaire).ToList();
+                        break;
+                    case "Etat":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.Etat).ToList();
+                        break;
+                    case "IdLivreDvd":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.IdLivreDvd).ToList();
+                        break;
+                    case "IdSuivi":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.IdSuivi).ToList();
+                        break;
+                    default:
+                        MessageBox.Show("Colonne inconnue");
+                        return;
+                }
+
+                RemplirCmdLivresCommandes(sortedList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur : {ex.Message}");
+            }
+        }
+
 
 
         #endregion
@@ -1868,14 +1981,14 @@ namespace MediaTekDocuments.view
         {
             bdgDvdListe.DataSource = Dvds;
             dgvDvdComListe.DataSource = bdgDvdListe;
-            dgvDvdComListe.Columns["idRayon"].Visible = false;
-            dgvDvdComListe.Columns["idGenre"].Visible = false;
-            dgvDvdComListe.Columns["idPublic"].Visible = false;
-            dgvDvdComListe.Columns["image"].Visible = false;
+            dgvDvdComListe.Columns[IdRayonColumn].Visible = false;
+            dgvDvdComListe.Columns[IdGenreColumnName].Visible = false;
+            dgvDvdComListe.Columns[idPublic].Visible = false;
+            dgvDvdComListe.Columns[UneImage].Visible = false;
             dgvDvdComListe.Columns["synopsis"].Visible = false;
             dgvDvdComListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvDvdComListe.Columns["id"].DisplayIndex = 0;
-            dgvDvdComListe.Columns["titre"].DisplayIndex = 1;
+            dgvDvdComListe.Columns[Titre].DisplayIndex = 1;
         }
         private void RemplirCmdDvdCommandes(List<CommandeDocument> commandes)
         {
@@ -1883,18 +1996,11 @@ namespace MediaTekDocuments.view
             bdgCommandes.DataSource = commandes;
             dgvDvdComListeCom.DataSource = bdgCommandes;
 
-            // Configurer l'affichage des colonnes
-            dgvDvdComListeCom.Columns["Id"].HeaderText = "ID Commande";
-            dgvDvdComListeCom.Columns["DateCommande"].HeaderText = "Date de Commande";
-            dgvDvdComListeCom.Columns["Montant"].HeaderText = "Montant (€)";
-            dgvDvdComListeCom.Columns["NbExemplaire"].HeaderText = "Exemplaires";
-            dgvDvdComListeCom.Columns["Etat"].HeaderText = "État";
-
             // Réorganiser les colonnes en fonction de leur index d'affichage
             dgvDvdComListeCom.Columns["Id"].DisplayIndex = 0;
-            dgvDvdComListeCom.Columns["DateCommande"].DisplayIndex = 1;
-            dgvDvdComListeCom.Columns["Montant"].DisplayIndex = 2;
-            dgvDvdComListeCom.Columns["NbExemplaire"].DisplayIndex = 3;
+            dgvDvdComListeCom.Columns[DateCommandeColumnName].DisplayIndex = 1;
+            dgvDvdComListeCom.Columns[Montant].DisplayIndex = 2;
+            dgvDvdComListeCom.Columns[NbExemplaire].DisplayIndex = 3;
             dgvDvdComListeCom.Columns["Etat"].DisplayIndex = 4;
 
             dgvDvdComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -1921,17 +2027,12 @@ namespace MediaTekDocuments.view
                 cbxDvdComEtat.DisplayMember = "Etat";
                 cbxDvdComEtat.ValueMember = "Id";
                 // trouver l'état de la commande + sélectionner dans le ComboBox
-                var etatCommande = suivisItems.FirstOrDefault(s => s.Id == commande.IdSuivi);
+                var etatCommande = Array.Find(suivisItems, s => s.Id == commande.IdSuivi);
                 if (etatCommande != null)
                 {
                     cbxDvdComEtat.SelectedItem = etatCommande;
                 }
-                // événement pour récupérer l'id suivi lorsque l'état est sélectionné
-                cbxDvdComEtat.SelectedIndexChanged += (sender, e) =>
-                {
-                    var selectedEtat = (Suivi)cbxDvdComEtat.SelectedItem;
-                    int idSuiviSelectionne = selectedEtat.Id;
-                };
+
             }
 
             else
@@ -1946,13 +2047,13 @@ namespace MediaTekDocuments.view
 
             switch (mode)
             {
-                case "Ajout":
+                case Ajout:
                     lblCrudTitreDvd.Text = "Êtes-vous sûr de réaliser cet ajout ?";
                     break;
-                case "Suppression":
+                case Suppression:
                     lblCrudTitreDvd.Text = "Êtes-vous sûr de réaliser cette suppression ?";
                     break;
-                case "Modification":
+                case Modification:
                     lblCrudTitreDvd.Text = "Êtes-vous sûr de réaliser cette modification ?";
                     break;
                 default:
@@ -2032,7 +2133,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                     RemplirCmdDvdListeComplete();
                 }
             }
@@ -2050,6 +2151,7 @@ namespace MediaTekDocuments.view
 
                 // Utilise la méthode du contrôleur pour récupérer les commandes associées au dvd sélectionné
                 List<CommandeDocument> commandesAssociees = controller.GetCommandesLivres(dvdSelectionne.Id);
+                lesCommandesDocument = controller.GetCommandesLivres(dvdSelectionne.Id);
                 // Remplir la DataGridView avec les commandes récupérées
                 RemplirCmdDvdCommandes(commandesAssociees);
             }
@@ -2060,13 +2162,88 @@ namespace MediaTekDocuments.view
             {
                 // Récupérer la commande sélectionnée dans la DataGridView
                 var commande = (CommandeDocument)dgvDvdComListeCom.CurrentRow.DataBoundItem;
+
                 AfficheCommandeDvdInfo(commande);
             }
         }
+        private void dgvDvdComListe_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            VideCmdDvdZones();
+            string titreColonne = dgvDvdComListe.Columns[e.ColumnIndex].HeaderText;
+            List<Dvd> sortedList = new List<Dvd>();
+            switch (titreColonne)
+            {
+                case "Id":
+                    sortedList = lesDvd.OrderBy(o => o.Id).ToList();
+                    break;
+                case "Titre":
+                    sortedList = lesDvd.OrderBy(o => o.Titre).ToList();
+                    break;
+                case "Duree":
+                    sortedList = lesDvd.OrderBy(o => o.Duree).ToList();
+                    break;
+                case "Realisateur":
+                    sortedList = lesDvd.OrderBy(o => o.Realisateur).ToList();
+                    break;
+                case "Genre":
+                    sortedList = lesDvd.OrderBy(o => o.Genre).ToList();
+                    break;
+                case "Public":
+                    sortedList = lesDvd.OrderBy(o => o.Public).ToList();
+                    break;
+                case "Rayon":
+                    sortedList = lesDvd.OrderBy(o => o.Rayon).ToList();
+                    break;
+            }
+            RemplirCmdDvdListe(sortedList);
+        }
+        private void dgvDvdComListeCom_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+                ViderCmdLivresInfos();
+                string titreColonne = dgvDvdComListeCom.Columns[e.ColumnIndex].HeaderText;
+                List<CommandeDocument> sortedList;
+                switch (titreColonne)
+                {
+                    case "Id":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.Id).ToList();
+                        break;
+                    case "DateCommande":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.DateCommande).ToList();
+                        break;
+                    case "Montant":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.Montant).ToList();
+                        break;
+                    case "NbExemplaire":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.NbExemplaire).ToList();
+                        break;
+                    case "Etat":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.Etat).ToList();
+                        break;
+                    case "IdLivreDvd":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.IdLivreDvd).ToList();
+                        break;
+                    case "IdSuivi":
+                        sortedList = lesCommandesDocument.OrderBy(o => o.IdSuivi).ToList();
+                        break;
+                    default:
+                        MessageBox.Show("Colonne inconnue");
+                        return;
+                }
+
+                RemplirCmdDvdCommandes(sortedList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur : {ex.Message}");
+            }
+        }
+
 
         private void btnDvdComModifier_Click(object sender, EventArgs e)
         {
-            Mode = "Modification";
+            Mode = Modification;
 
             if (!VerifierSelection(dgvDvdComListeCom))
             {
@@ -2094,7 +2271,7 @@ namespace MediaTekDocuments.view
         }
         private void btnDvdComSupprimer_Click(object sender, EventArgs e)
         {
-            Mode = "Suppression";
+            Mode = Suppression;
             if (!VerifierSelection(dgvDvdComListeCom))
             {
                 Mode = "";
@@ -2108,7 +2285,7 @@ namespace MediaTekDocuments.view
         }
         private void btnDvdComAjouter_Click(object sender, EventArgs e)
         {
-            Mode = "Ajout";
+            Mode = Ajout;
             LabelCrudTitreDvd(Mode, true);
             VisibleCommandeDvd();
             RendreBoutonsVisiblesOuInvisibles(btnDvdComModifier, btnDvdComSupprimer, btnDvdComAjouter, true);
@@ -2116,15 +2293,24 @@ namespace MediaTekDocuments.view
             DesactiverDataGridView(dgvDvdComListeCom, true);
             ViderCmdDvdInfos();
         }
-
         private void btnDvdComValider_Click(object sender, EventArgs e)
         {
             try
             {
                 // Récupération des données communes
                 DateTime dateCommande = dtpDvdComDateCommande.Value;
-                double montant = double.TryParse(txbDvdComMontant.Text, out double tempMontant) ? tempMontant : throw new Exception("Montant invalide.");
-                int nbExemplaires = int.TryParse(txbDvdComNbExemplaires.Text, out int tempNbExemplaires) ? tempNbExemplaires : throw new Exception("Nombre d'exemplaires invalide.");
+                double montant;
+                if (!double.TryParse(txbDvdComMontant.Text, out montant))
+                {
+                    MessageBox.Show("Montant invalide.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                int nbExemplaires;
+                if (!int.TryParse(txbDvdComNbExemplaires.Text, out nbExemplaires))
+                {
+                    MessageBox.Show("Nombre d'exemplaires invalide.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 string numDvd = txbComNumDvd.Text;
 
                 CommandeDocument commandeDocument = null;
@@ -2132,7 +2318,7 @@ namespace MediaTekDocuments.view
                 // Vérifie le mode sélectionné et crée l'objet `CommandeDocument`
                 switch (Mode)
                 {
-                    case "Ajout":
+                    case Ajout:
 
                         // Valeurs spécifiques à l'ajout
                         commandeDocument = new CommandeDocument(null, dateCommande, montant, nbExemplaires, numDvd, 1, "En Cours");
@@ -2143,32 +2329,50 @@ namespace MediaTekDocuments.view
                         CacherValiderDvd();
                         break;
 
-                    case "Suppression":
+                    case Suppression:
                         // Vérification de la sélection dans le ComboBox
                         if (cbxDvdComEtat.SelectedItem == null)
-                            throw new Exception("Veuillez sélectionner un état de suivi pour la suppression.");
+                        {
+                            MessageBox.Show("Veuillez sélectionner un état de suivi pour la suppression.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
 
                         Suivi suiviSelectionneSupp = (Suivi)cbxDvdComEtat.SelectedItem;
                         int idSuiviSupp = suiviSelectionneSupp.Id;
                         string etatSuiviSupp = suiviSelectionneSupp.Etat;
 
-                        int idCommandeSupp = int.TryParse(txbDvdComNbCommande.Text, out int tempIdCommandeSupp) ? tempIdCommandeSupp : throw new Exception("ID commande invalide.");
+                        int idCommandeSupp;
+                        if (!int.TryParse(txbDvdComNbCommande.Text, out idCommandeSupp))
+                        {
+                            MessageBox.Show(IdCommandeInvalide, Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                         commandeDocument = new CommandeDocument(idCommandeSupp, dateCommande, montant, nbExemplaires, numDvd, idSuiviSupp, etatSuiviSupp);
                         ExecuterOperation(() => controller.SupprimerCommandeDocument(commandeDocument), "Commande supprimée avec succès.", "Erreur lors de la suppression.");
                         ViderCmdDvdInfos();
                         CacherValiderDvd();
                         break;
 
-                    case "Modification":
+                    case Modification:
                         // Vérification de la sélection dans le ComboBox
                         if (cbxDvdComEtat.SelectedItem == null)
-                            throw new Exception("Veuillez sélectionner un état de suivi pour la modification.");
+                        {
+                            MessageBox.Show("Veuillez sélectionner un état de suivi pour la modification.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
 
                         Suivi suiviSelectionneModif = (Suivi)cbxDvdComEtat.SelectedItem;
                         int idSuiviModif = suiviSelectionneModif.Id;
                         string etatSuiviModif = suiviSelectionneModif.Etat;
 
-                        int idCommandeModif = int.TryParse(txbDvdComNbCommande.Text, out int tempIdCommandeModif) ? tempIdCommandeModif : throw new Exception("ID commande invalide.");
+                        int idCommandeModif;
+                        if (!int.TryParse(txbDvdComNbCommande.Text, out idCommandeModif))
+                        {
+                            MessageBox.Show(IdCommandeInvalide, Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                         commandeDocument = new CommandeDocument(idCommandeModif, dateCommande, montant, nbExemplaires, numDvd, idSuiviModif, etatSuiviModif);
                         ExecuterOperation(() => controller.ModifierCommandeDocument(commandeDocument), "Commande modifiée avec succès.", "Erreur lors de la modification.");
                         ViderCmdDvdInfos();
@@ -2176,16 +2380,15 @@ namespace MediaTekDocuments.view
                         break;
 
                     default:
-                        MessageBox.Show("Veuillez sélectionner une opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Veuillez sélectionner une opération.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void btnDvdComAnnuler_Click(object sender, EventArgs e)
         {
             LabelCrudTitreDvd(null, false);
@@ -2198,17 +2401,19 @@ namespace MediaTekDocuments.view
         #endregion
 
         #region Onglet Abonnement
+        private List<Abonnement> lesAbonnements = new List<Abonnement>();
+
         private void RemplirCmdRevuesListe(List<Revue> revues)
         {
             bdgRevuesListe.DataSource = revues;
             dgvCmdRevuesListe.DataSource = bdgRevuesListe;
-            dgvCmdRevuesListe.Columns["idRayon"].Visible = false;
-            dgvCmdRevuesListe.Columns["idGenre"].Visible = false;
-            dgvCmdRevuesListe.Columns["idPublic"].Visible = false;
-            dgvCmdRevuesListe.Columns["image"].Visible = false;
+            dgvCmdRevuesListe.Columns[IdRayonColumn].Visible = false;
+            dgvCmdRevuesListe.Columns[IdGenreColumnName].Visible = false;
+            dgvCmdRevuesListe.Columns[idPublic].Visible = false;
+            dgvCmdRevuesListe.Columns[UneImage].Visible = false;
             dgvCmdRevuesListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvCmdRevuesListe.Columns["id"].DisplayIndex = 0;
-            dgvCmdRevuesListe.Columns["titre"].DisplayIndex = 1;
+            dgvCmdRevuesListe.Columns[Titre].DisplayIndex = 1;
         }
         private void VideCmdRevuesZones()
         {
@@ -2229,16 +2434,10 @@ namespace MediaTekDocuments.view
             bdgCommandes.DataSource = commandes;
             dgvRevueComListeCom.DataSource = bdgCommandes;
 
-            // Configurer l'affichage des colonnes
-            dgvRevueComListeCom.Columns["Id"].HeaderText = "ID";
-            dgvRevueComListeCom.Columns["DateCommande"].HeaderText = "Date de Commande";
-            dgvRevueComListeCom.Columns["Montant"].HeaderText = "Montant";
-            dgvRevueComListeCom.Columns["DateFinAbonnement"].HeaderText = "Date Fin Abonnement";
-
             // Réorganiser les colonnes en fonction de leur index d'affichage
             dgvRevueComListeCom.Columns["Id"].DisplayIndex = 0;
-            dgvRevueComListeCom.Columns["DateCommande"].DisplayIndex = 1;
-            dgvRevueComListeCom.Columns["Montant"].DisplayIndex = 2;
+            dgvRevueComListeCom.Columns[DateCommandeColumnName].DisplayIndex = 1;
+            dgvRevueComListeCom.Columns[Montant].DisplayIndex = 2;
             dgvRevueComListeCom.Columns["DateFinAbonnement"].DisplayIndex = 3;
 
             dgvRevueComListeCom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -2275,13 +2474,13 @@ namespace MediaTekDocuments.view
 
             switch (mode)
             {
-                case "Ajout":
+                case Ajout:
                     lblCrudTitreAbonnement.Text = "Êtes-vous sûr de réaliser cet ajout ?";
                     break;
-                case "Suppression":
+                case Suppression:
                     lblCrudTitreAbonnement.Text = "Êtes-vous sûr de réaliser cette suppression ?";
                     break;
-                case "Modification":
+                case Modification:
                     lblCrudTitreAbonnement.Text = "Êtes-vous sûr de réaliser cette modification ?";
                     break;
                 default:
@@ -2365,7 +2564,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NumeroIntrouvable);
                     RemplirCmdRevuesListeComplete();
                 }
             }
@@ -2434,6 +2633,7 @@ namespace MediaTekDocuments.view
 
                 // Utilise la méthode du contrôleur pour récupérer les commandes associées au dvd sélectionné
                 List<Abonnement> commandesAssociees = controller.GetCommandesAbonnement(revueSelectionne.Id);
+                lesAbonnements = controller.GetCommandesAbonnement(revueSelectionne.Id);
                 // Remplir la DataGridView avec les commandes récupérées
                 RemplirCmdAbonnementCommandes(commandesAssociees);
             }
@@ -2449,7 +2649,7 @@ namespace MediaTekDocuments.view
         }
         private void btnAbonnementComAjouter_Click(object sender, EventArgs e)
         {
-            Mode = "Ajout";
+            Mode = Ajout;
             LabelCrudTitreAbonnement(Mode, true);
             VisibleCommandeAbonnement();
             RendreBoutonsVisiblesOuInvisibles(btnAbonnementComModifier, btnAbonnementComSupprimer, btnAbonnementComAjouter, true);
@@ -2459,7 +2659,7 @@ namespace MediaTekDocuments.view
         }
         private void btnAbonnementComModifier_Click(object sender, EventArgs e)
         {
-            Mode = "Modification";
+            Mode = Modification;
 
             if (!VerifierSelection(dgvRevueComListeCom))
             {
@@ -2476,7 +2676,7 @@ namespace MediaTekDocuments.view
         }
         private void btnAbonnementComSupprimer_Click(object sender, EventArgs e)
         {
-            Mode = "Suppression";
+            Mode = Suppression;
             if (!VerifierSelection(dgvRevueComListeCom))
             {
                 Mode = "";
@@ -2503,7 +2703,12 @@ namespace MediaTekDocuments.view
                 // Récupération des données communes
                 DateTime dateCommandeAbonnement = dtpAbonnementComDateCommande.Value;
                 DateTime dateFinAbonnement = dtpFinAbonnementDateCommande.Value;
-                double montant = double.TryParse(txbAbonnementComMontant.Text, out double tempMontant) ? tempMontant : throw new Exception("Montant invalide ou manquant.");
+                double montant;
+                if (!double.TryParse(txbAbonnementComMontant.Text, out montant))
+                {
+                    MessageBox.Show("Attention ! Montant invalide ou manquant.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 string numRevue = txbComNumRevue.Text;
 
                 Abonnement commandeRevue = null;
@@ -2511,7 +2716,7 @@ namespace MediaTekDocuments.view
                 // Vérifie le mode sélectionné et crée l'objet `Abonnement`
                 switch (Mode)
                 {
-                    case "Ajout":
+                    case Ajout:
 
                         // Valeurs spécifiques à l'ajout
                         commandeRevue = new Abonnement(null, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
@@ -2521,12 +2726,17 @@ namespace MediaTekDocuments.view
                         CacherValiderAbonnement();
                         break;
 
-                    case "Suppression":
-                        int idAbonnement = int.TryParse(txbAbonnementComNbCommande.Text, out int tempIdAbonnement) ? tempIdAbonnement : throw new Exception("Identifiant de commande invalide ou manquant.");
+                    case Suppression:
+                        int idAbonnement;
+                        if (!int.TryParse(txbAbonnementComNbCommande.Text, out idAbonnement))
+                        {
+                            MessageBox.Show("Identifiant de commande invalide ou manquant.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                         commandeRevue = new Abonnement(idAbonnement, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
 
                         var exemplaires = controller.GetExemplairesRevue(commandeRevue.IdRevue);
-                        bool exemplaireRattache = exemplaires.Any(exemplaire =>Abonnement.ParutionDansAbonnement(commandeRevue.DateCommande, commandeRevue.DateFinAbonnement.Value, exemplaire.DateAchat));
+                        bool exemplaireRattache = exemplaires.Exists(exemplaire =>Abonnement.ParutionDansAbonnement(commandeRevue.DateCommande, commandeRevue.DateFinAbonnement.Value, exemplaire.DateAchat));
 
                         if (exemplaireRattache)
                         {
@@ -2544,29 +2754,112 @@ namespace MediaTekDocuments.view
                         ViderAbonnementDvdInfos();
                         CacherValiderAbonnement();
                         break;
-                    case "Modification":
+                    case Modification:
 
-                        int idAbonnementModif = int.TryParse(txbAbonnementComNbCommande.Text, out int tempIdAbonnementModif) ? tempIdAbonnementModif : throw new Exception("Identifiant d'abonnement invalide ou manquant.");
+                        int idAbonnementModif;
+                        if (!int.TryParse(txbAbonnementComNbCommande.Text, out idAbonnementModif))
+                        {
+                            MessageBox.Show("Identifiant d'abonnement invalide ou manquant.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                         commandeRevue = new Abonnement(idAbonnementModif, dateCommandeAbonnement, montant, dateFinAbonnement, numRevue);
                         ExecuterOperation(() => controller.ModifierCommandeAbonnement(commandeRevue), "Abonnement modifiée avec succès.", "Erreur lors de la modification.");
                         ViderAbonnementDvdInfos();
                         CacherValiderAbonnement();
                         break;
                     default:
-                        MessageBox.Show("Veuillez sélectionner une opération.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Veuillez sélectionner une opération.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         
         }
+
+        private void dgvCmdRevuesListe_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+                ViderCmdLivresInfos();
+                string titreColonne = dgvCmdRevuesListe.Columns[e.ColumnIndex].HeaderText;
+                List<Revue> sortedList;
+                switch (titreColonne)
+                {
+                    case "Id":
+                        sortedList = lesRevues.OrderBy(o => o.Id).ToList();
+                        break;
+                    case "Titre":
+                        sortedList = lesRevues.OrderBy(o => o.Titre).ToList();
+                        break;
+                    case "Periodicite":
+                        sortedList = lesRevues.OrderBy(o => o.Periodicite).ToList();
+                        break;
+                    case "DelaiMiseADispo":
+                        sortedList = lesRevues.OrderBy(o => o.DelaiMiseADispo).ToList();
+                        break;
+                    case "Genre":
+                        sortedList = lesRevues.OrderBy(o => o.Genre).ToList();
+                        break;
+                    case "Public":
+                        sortedList = lesRevues.OrderBy(o => o.Public).ToList();
+                        break;
+                    case "Rayon":
+                        sortedList = lesRevues.OrderBy(o => o.Rayon).ToList();
+                        break;
+                    default:
+                        MessageBox.Show("Colonne inconnue");
+                        return;
+                }
+
+                RemplirCmdRevuesListe(sortedList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur : {ex.Message}");
+            }
+        }
+
+        private void dgvRevueComListeCom_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+                ViderCmdLivresInfos();
+                string titreColonne = dgvRevueComListeCom.Columns[e.ColumnIndex].HeaderText;
+                List<Abonnement> sortedList;
+                switch (titreColonne)
+                {
+                    case "Id":
+                        sortedList = lesAbonnements.OrderBy(o => o.Id).ToList();
+                        break;
+                    case "DateCommande":
+                        sortedList = lesAbonnements.OrderBy(o => o.DateCommande).ToList();
+                        break;
+                    case "Montant":
+                        sortedList = lesAbonnements.OrderBy(o => o.Montant).ToList();
+                        break;
+                    case "DateFinAbonnement":
+                        sortedList = lesAbonnements.OrderBy(o => o.DateFinAbonnement).ToList();
+                        break;
+                    case "IdRevue":
+                        sortedList = lesAbonnements.OrderBy(o => o.IdRevue).ToList();
+                        break;
+                    default:
+                        MessageBox.Show("Colonne inconnue");
+                        return;
+                }
+                RemplirCmdAbonnementCommandes(sortedList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur : {ex.Message}");
+            }
+        }
+
+
         #endregion
-
-
-
 
 
     }

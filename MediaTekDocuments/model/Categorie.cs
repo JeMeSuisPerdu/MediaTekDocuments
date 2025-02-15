@@ -7,7 +7,7 @@ namespace MediaTekDocuments.model
     public class Categorie
     {
         public string Id { get; }
-        public string Libelle { get; }
+        public string Libelle { get; set; }
 
         public Categorie(string id, string libelle)
         {

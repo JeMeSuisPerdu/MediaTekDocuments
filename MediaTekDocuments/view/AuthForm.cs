@@ -6,6 +6,7 @@ using BCrypt.Net; // Namespace pour bcrypt
 using MediaTekDocuments.controller;
 using MediaTekDocuments.model;
 
+
 namespace MediaTekDocuments.view
 {
     public partial class AuthForm : Form
@@ -25,73 +26,78 @@ namespace MediaTekDocuments.view
             string motDePasse = txbMotDePasseUser.Text;
 
             // Vérifie si les champs ne sont pas vides
-            if (!string.IsNullOrEmpty(nomUtilisateur) && !string.IsNullOrEmpty(motDePasse))
+            if (AreFieldsValid(nomUtilisateur, motDePasse))
             {
-                // Crée un objet utilisateur avec les données saisies
-                Utilisateur infoUser = new Utilisateur(1, nomUtilisateur, motDePasse, 1);
+                Utilisateur utilisateurTrouve = GetUserInfo(nomUtilisateur);
 
-                // Appel au contrôleur pour récupérer les informations utilisateur
-                List<Utilisateur> utilisateurs = controller.GetUserInfo(infoUser);
-
-                // Vérifie si un utilisateur correspond au nom fourni
-                Utilisateur utilisateurTrouve = utilisateurs.FirstOrDefault(u =>
-                    u.Nom == nomUtilisateur);
-
-                if (utilisateurTrouve != null)
+                if (utilisateurTrouve != null && IsPasswordValid(motDePasse, utilisateurTrouve))
                 {
-                    // Vérifie le mot de passe hashé
-                    if (BCrypt.Net.BCrypt.Verify(motDePasse, utilisateurTrouve.MotDePasse))
-                    {
-                        // Authentification réussie
-                        FrmMediatek accueilForm = new FrmMediatek();
-
-                        if (utilisateurTrouve.IdService == 3) // Service "Culture"
-                        {
-                            MessageBox.Show("Vous n'avez pas les droits suffisants pour accéder à cette application.",
-                                            "Accès refusé",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Error);
-                            Application.Exit(); // Ferme l'application si accès non autorisé
-                        }
-                        else if (utilisateurTrouve.IdService == 2) // Service "Prêts"
-                        {
-                            accueilForm.CacherOnglet();
-                        }
-                        else
-                        {
-                            accueilForm.AfficherAbonnementsFinDans30Jours();
-
-                        }
-
-                        accueilForm.Owner = this;
-                        this.Visible = false;
-                        accueilForm.Show();
-                    }
-                    else
-                    {
-                        // Mot de passe incorrect
-                        MessageBox.Show("Mot de passe incorrect.",
-                                        "Erreur d'authentification",
-                                        MessageBoxButtons.OK,
-                                        MessageBoxIcon.Error);
-                    }
+                    HandleSuccessfulLogin(utilisateurTrouve);
                 }
                 else
                 {
-                    // Nom d'utilisateur non trouvé
-                    MessageBox.Show("Nom d'utilisateur incorrect.",
-                                    "Erreur d'authentification",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
+                    ShowErrorMessage("Nom d'utilisateur incorrect ou mot de passe incorrect.",
+                                      "Erreur d'authentification");
                 }
             }
             else
             {
-                MessageBox.Show("Veuillez remplir tous les champs.",
-                                "Erreur de saisie",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
+                ShowErrorMessage("Veuillez remplir tous les champs.", "Erreur de saisie", MessageBoxIcon.Warning);
             }
+        }
+
+        private bool AreFieldsValid(string nomUtilisateur, string motDePasse)
+        {
+            return !string.IsNullOrEmpty(nomUtilisateur) && !string.IsNullOrEmpty(motDePasse);
+        }
+
+        private Utilisateur GetUserInfo(string nomUtilisateur)
+        {
+            Utilisateur infoUser = new Utilisateur(1, nomUtilisateur, string.Empty, 1);
+            List<Utilisateur> utilisateurs = controller.GetUserInfo(infoUser);
+            return utilisateurs.Find(u => u.Nom == nomUtilisateur);
+        }
+
+
+        private bool IsPasswordValid(string motDePasse, Utilisateur utilisateur)
+        {
+            return BCrypt.Net.BCrypt.Verify(motDePasse, utilisateur.MotDePasse);
+        }
+
+        private void HandleSuccessfulLogin(Utilisateur utilisateurTrouve)
+        {
+            FrmMediatek accueilForm = new FrmMediatek();
+
+            if (utilisateurTrouve.IdService == 3) // Service "Culture"
+            {
+                MessageBox.Show("Vous n'avez pas les droits suffisants pour accéder à cette application.",
+                                "Accès refusé", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit(); // Ferme l'application si accès non autorisé
+            }
+            else
+            {
+                ConfigureAccueilForm(utilisateurTrouve, accueilForm);
+            }
+
+            accueilForm.Owner = this;
+            this.Visible = false;
+            accueilForm.Show();
+        }
+
+        private void ConfigureAccueilForm(Utilisateur utilisateur, FrmMediatek accueilForm)
+        {
+            if (utilisateur.IdService == 2) // Service "Prêts"
+            {
+                accueilForm.CacherOnglet();
+            }
+            else
+            {
+                accueilForm.AfficherAbonnementsFinDans30Jours();
+            }
+        }
+        private void ShowErrorMessage(string message, string caption, MessageBoxIcon icon = MessageBoxIcon.Error)
+        {
+            MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
         }
     }
 }

@@ -488,6 +488,7 @@ namespace MediaTekDocuments.view
             this.dgvRevueComListeCom.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvRevueComListeCom.Size = new System.Drawing.Size(502, 275);
             this.dgvRevueComListeCom.TabIndex = 18;
+            this.dgvRevueComListeCom.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvRevueComListeCom_ColumnHeaderMouseClick);
             this.dgvRevueComListeCom.SelectionChanged += new System.EventHandler(this.dgvRevueComListeCom_SelectionChanged);
             // 
             // label86
@@ -702,6 +703,7 @@ namespace MediaTekDocuments.view
             this.dgvCmdRevuesListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCmdRevuesListe.Size = new System.Drawing.Size(894, 238);
             this.dgvCmdRevuesListe.TabIndex = 4;
+            this.dgvCmdRevuesListe.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCmdRevuesListe_ColumnHeaderMouseClick);
             this.dgvCmdRevuesListe.SelectionChanged += new System.EventHandler(this.dgvCmdRevuesListe_SelectionChanged);
             // 
             // tabCmdDvd
@@ -875,6 +877,7 @@ namespace MediaTekDocuments.view
             this.dgvDvdComListeCom.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvDvdComListeCom.Size = new System.Drawing.Size(502, 275);
             this.dgvDvdComListeCom.TabIndex = 18;
+            this.dgvDvdComListeCom.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvDvdComListeCom_ColumnHeaderMouseClick);
             this.dgvDvdComListeCom.SelectionChanged += new System.EventHandler(this.dgvDvdComListeCom_SelectionChanged);
             // 
             // labelEtatCmdDvd
@@ -1096,6 +1099,7 @@ namespace MediaTekDocuments.view
             this.dgvDvdComListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvDvdComListe.Size = new System.Drawing.Size(889, 231);
             this.dgvDvdComListe.TabIndex = 4;
+            this.dgvDvdComListe.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvDvdComListe_ColumnHeaderMouseClick);
             this.dgvDvdComListe.SelectionChanged += new System.EventHandler(this.dgvDvdComListe_SelectionChanged);
             // 
             // tabCmdLivre
@@ -1262,6 +1266,7 @@ namespace MediaTekDocuments.view
             this.dgvLivresComListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvLivresComListe.Size = new System.Drawing.Size(893, 223);
             this.dgvLivresComListe.TabIndex = 4;
+            this.dgvLivresComListe.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvLivresComListe_ColumnHeaderMouseClick);
             this.dgvLivresComListe.SelectionChanged += new System.EventHandler(this.dgvLivresComListe_SelectionChanged);
             // 
             // label64
@@ -1440,6 +1445,7 @@ namespace MediaTekDocuments.view
             this.dgvLivresComListeCom.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvLivresComListeCom.Size = new System.Drawing.Size(502, 275);
             this.dgvLivresComListeCom.TabIndex = 18;
+            this.dgvLivresComListeCom.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvLivresComListeCom_ColumnHeaderMouseClick);
             this.dgvLivresComListeCom.SelectionChanged += new System.EventHandler(this.dgvLivresComListeCom_SelectionChanged);
             // 
             // labelEtatCmdLivre
