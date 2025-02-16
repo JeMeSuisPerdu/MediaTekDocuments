@@ -18,7 +18,7 @@ namespace MediaTekDocuments.dal
         /// <summary>
         /// adresse de l'API
         /// </summary>
-        private static readonly string uriApi = ConfigurationManager.AppSettings["ApiUri"];
+        private static readonly string uriApi =  ConfigurationManager.AppSettings["ApiUri"];
         /// <summary>
         /// constante pour la chaîne 'champs='
         /// </summary>
@@ -54,15 +54,7 @@ namespace MediaTekDocuments.dal
         {
             try
             {
-                string username = ConfigurationManager.AppSettings["ApiUsername"];
-                string password = ConfigurationManager.AppSettings["ApiPassword"];
-
-                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(uriApi))
-                {
-                    throw new ConfigurationErrorsException("Le mot de passe de l'API est manquant dans le fichier de configuration.");
-                }
-
-                string authenticationString = $"{username}:{password}";
+                authenticationString = "admin:adminpwd";
                 api = ApiRest.GetInstance(uriApi, authenticationString);
 
             }
