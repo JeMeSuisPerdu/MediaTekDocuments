@@ -54,7 +54,15 @@ namespace MediaTekDocuments.dal
         {
             try
             {
-                authenticationString = "admin:adminpwd";
+                string username = ConfigurationManager.AppSettings["ApiUsername"];
+                string password = ConfigurationManager.AppSettings["ApiPassword"];
+
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(uriApi))
+                {
+                    throw new ConfigurationErrorsException("Le mot de passe de l'API est manquant dans le fichier de configuration.");
+                }
+
+                string authenticationString = $"{username}:{password}";
                 api = ApiRest.GetInstance(uriApi, authenticationString);
 
             }
