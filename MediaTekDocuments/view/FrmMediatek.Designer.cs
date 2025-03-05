@@ -379,9 +379,9 @@ namespace MediaTekDocuments.view
             this.lblCrudTitreAbonnement.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCrudTitreAbonnement.Location = new System.Drawing.Point(616, 219);
             this.lblCrudTitreAbonnement.Name = "lblCrudTitreAbonnement";
-            this.lblCrudTitreAbonnement.Size = new System.Drawing.Size(59, 16);
+            this.lblCrudTitreAbonnement.Size = new System.Drawing.Size(245, 16);
             this.lblCrudTitreAbonnement.TabIndex = 47;
-            this.lblCrudTitreAbonnement.Text = "label67";
+            this.lblCrudTitreAbonnement.Text = "Voulez vous réaliser cette action ?";
             this.lblCrudTitreAbonnement.Visible = false;
             // 
             // txbComNumRevue
@@ -753,9 +753,9 @@ namespace MediaTekDocuments.view
             this.lblCrudTitreDvd.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCrudTitreDvd.Location = new System.Drawing.Point(616, 219);
             this.lblCrudTitreDvd.Name = "lblCrudTitreDvd";
-            this.lblCrudTitreDvd.Size = new System.Drawing.Size(59, 16);
+            this.lblCrudTitreDvd.Size = new System.Drawing.Size(245, 16);
             this.lblCrudTitreDvd.TabIndex = 47;
-            this.lblCrudTitreDvd.Text = "label67";
+            this.lblCrudTitreDvd.Text = "Voulez vous réaliser cette action ?";
             this.lblCrudTitreDvd.Visible = false;
             // 
             // cbxDvdComEtat
@@ -1321,9 +1321,9 @@ namespace MediaTekDocuments.view
             this.lblCrudTitre.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCrudTitre.Location = new System.Drawing.Point(616, 219);
             this.lblCrudTitre.Name = "lblCrudTitre";
-            this.lblCrudTitre.Size = new System.Drawing.Size(59, 16);
+            this.lblCrudTitre.Size = new System.Drawing.Size(245, 16);
             this.lblCrudTitre.TabIndex = 47;
-            this.lblCrudTitre.Text = "label67";
+            this.lblCrudTitre.Text = "Voulez vous réaliser cette action ?";
             this.lblCrudTitre.Visible = false;
             // 
             // cbxLivresComEtat
@@ -2661,6 +2661,7 @@ namespace MediaTekDocuments.view
             // 
             // tabLivres
             // 
+            this.tabLivres.BackColor = System.Drawing.Color.Transparent;
             this.tabLivres.Controls.Add(this.grpLivresInfos);
             this.tabLivres.Controls.Add(this.grpLivresRecherche);
             this.tabLivres.Location = new System.Drawing.Point(4, 22);
@@ -2668,7 +2669,6 @@ namespace MediaTekDocuments.view
             this.tabLivres.Size = new System.Drawing.Size(964, 732);
             this.tabLivres.TabIndex = 2;
             this.tabLivres.Text = "Livres";
-            this.tabLivres.UseVisualStyleBackColor = true;
             this.tabLivres.Enter += new System.EventHandler(this.TabLivres_Enter);
             // 
             // grpLivresInfos

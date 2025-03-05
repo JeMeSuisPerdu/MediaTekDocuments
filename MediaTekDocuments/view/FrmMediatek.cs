@@ -1525,7 +1525,7 @@ namespace MediaTekDocuments.view
                     break;
 
                 case 5: // Annulée
-                        // Une commande annulée ne peut pas changer d'état.
+                    // Une commande annulée ne peut pas changer d'état.
                     MessageBox.Show("Une commande annulée ne peut pas changer d'état.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     break;
 
