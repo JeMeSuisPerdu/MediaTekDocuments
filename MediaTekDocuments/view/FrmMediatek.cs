@@ -2496,6 +2496,8 @@ namespace MediaTekDocuments.view
             dtpAbonnementComDateCommande.Enabled = true;
             dtpFinAbonnementDateCommande.Enabled = true;
             txbComNumRevue.ReadOnly = false;
+            btnAbonnementComValider.Visible = true;
+            btnAbonnementComAnnuler.Visible = true;
         }
         private void VisibleGroupBoxCommandeAbonnement()
         {
@@ -2506,6 +2508,10 @@ namespace MediaTekDocuments.view
             dtpAbonnementComDateCommande.Enabled = false;
             dtpFinAbonnementDateCommande.Enabled = false;
             txbComNumRevue.ReadOnly = true;
+            btnAbonnementComValider.Visible = false;
+            btnAbonnementComAnnuler.Visible = false;
+
+
         }
         private void CacherValiderAbonnement()
         {
@@ -2525,6 +2531,7 @@ namespace MediaTekDocuments.view
             RemplirComboCategorie(controller.GetAllRayons(), bdgRayons, cbxCmdRevuesRayon);
             RemplirCmdRevuesListeComplete();
             VisibleGroupBoxCommandeAbonnement();
+
         }
         private void txbCmdRevuesTitreRecherche_TextChanged(object sender, EventArgs e)
         {

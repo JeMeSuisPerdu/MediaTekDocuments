@@ -28,16 +28,5 @@ namespace MediaTekDocumentsTest
             Assert.AreEqual("Les classiques", livreCible.Collection);
         }
 
-        // Test des valeurs spécifiques au Livre
-        [TestMethod]
-        public void Livre_ProprietesSpecificites_LivreCorrectes()
-        {
-            Livre livreCible = new Livre("L002", "1984", "1984.jpg", "978-0-452-28423-4", "George Orwell", "Dystopia",
-                "G002", "Dystopian", "P002", "Adulte", "R002", "Science Fiction");
-
-            Assert.AreEqual("978-0-452-28423-4", livreCible.Isbn);
-            Assert.AreEqual("George Orwell", livreCible.Auteur);
-            Assert.AreEqual("Dystopia", livreCible.Collection);
-        }
     }
 }

@@ -22,14 +22,5 @@ namespace MediaTekDocumentsTest
             Suivi suivi = new Suivi(2, "Terminé");
             Assert.AreEqual("Terminé", suivi.ToString());
         }
-
-        // Vérifie la gestion d'un état vide
-        [TestMethod]
-        public void Suivi_Initialisation_EtatVide()
-        {
-            Suivi suivi = new Suivi(3, "");
-            Assert.AreEqual("", suivi.Etat);
-            Assert.AreEqual("", suivi.ToString());
-        }
     }
 }

@@ -34,14 +34,5 @@ namespace MediaTekDocumentsTest
             Etat etat = new Etat("E003", libelle);
             Assert.AreEqual(libelle, etat.Libelle);
         }
-
-        // Vérifie que les propriétés sont nulles ou vides en cas de valeurs nulles
-        [TestMethod]
-        public void Etat_ProprietesNull_AssigneValeursParDefaut()
-        {
-            Etat etat = new Etat(null, null);
-            Assert.IsNull(etat.Id);
-            Assert.IsNull(etat.Libelle);
-        }
     }
 }

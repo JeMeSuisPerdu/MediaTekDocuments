@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using BCrypt.Net; // Namespace pour bcrypt
+using BCrypt.Net;
 using MediaTekDocuments.controller;
 using MediaTekDocuments.model;
 
@@ -90,10 +90,11 @@ namespace MediaTekDocuments.view
             {
                 accueilForm.CacherOnglet();
             }
-            else
+            else if (utilisateur.IdService == 1 || utilisateur.IdService == 4) // Service "Administratif" ou l'Administrateur
             {
                 accueilForm.AfficherAbonnementsFinDans30Jours();
             }
+
         }
         private void ShowErrorMessage(string message, string caption, MessageBoxIcon icon = MessageBoxIcon.Error)
         {

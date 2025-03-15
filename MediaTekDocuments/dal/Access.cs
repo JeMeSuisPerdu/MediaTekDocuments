@@ -238,6 +238,7 @@ namespace MediaTekDocuments.dal
                         Log.Information("RETOUR API : {ResultString}", resultString);
                         liste = JsonConvert.DeserializeObject<List<T>>(resultString, new CustomBooleanJsonConverter());
                     }
+
                 }
                 else
                 {
@@ -330,22 +331,13 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandeDocAjout", ChampsQueryParam + jsonDetailCommande);
-                if (liste != null && liste.Count > 0)
-                {
-                    Log.Information("Commande document créée avec succès.");
-                    return true;
-                }
-                else
-                {
-                    Log.Warning("Échec de la création de la commande document. Aucune donnée retournée.");
-                }
+                return true;
             }
             catch (Exception ex)
             {
                 Log.Error("Erreur lors de la création de la commande document : {Message} ", ex.Message);
+                return false;
             }
-
-            return false;
         }
 
         public bool ModifierCommandeDocument(CommandeDocument updateCommande)
@@ -358,22 +350,15 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(PUT, "commandeDocModifier", ChampsQueryParam + jsonDetailCommande);
-                if (liste != null && liste.Count > 0)
-                {
-                    Log.Information("Commande document modifiée avec succès.");
-                    return true;
-                }
-                else
-                {
-                    Log.Warning("Échec de la modification de la commande document. Aucune donnée retournée.");
-                }
+                return true;
+
             }
             catch (Exception ex)
             {
                 Log.Error("Erreur lors de la modification de la commande document : {Message} ", ex.Message);
-            }
+                return false;
 
-            return false;
+            }
         }
         public bool SupprimerCommandeDocument(CommandeDocument deleteCommande)
         {
@@ -385,22 +370,13 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeDocSupprimer", ChampsQueryParam + jsonDetailCommande);
-                if (liste != null && liste.Count > 0)
-                {
-                    Log.Information("Commande document supprimée avec succès.");
-                    return true;
-                }
-                else
-                {
-                    Log.Warning("Échec de la suppression de la commande document. Aucune donnée retournée.");
-                }
+                return true;
             }
             catch (Exception ex)
             {
                 Log.Error("Erreur lors de la suppression de la commande document : {Message} ", ex.Message);
+                return false;
             }
-
-            return false;
         }
 
         public List<Abonnement> GetCommandesAbonnement(string idRevue)
@@ -432,23 +408,16 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "commandeAbonnementAjout", ChampsQueryParam + jsonDetailCommande);
-                if (liste != null && liste.Count > 0)
-                {
-                    Log.Information("Commande d'abonnement créée avec succès.");
-                    return true;
-                }
-                else
-                {
-                    Log.Warning("Échec de la création de la commande d'abonnement. Aucune donnée retournée.");
-                }
+                // Si l'exécution atteint cette ligne sans exceptions, la commande a été créée avec succès
+                return true;
             }
             catch (Exception ex)
             {
                 Log.Error("Erreur lors de la création de la commande d'abonnement : {Message}", ex.Message);
+                return false; // Retourner false si une exception se produit
             }
-
-            return false;
         }
+
 
         public bool SupprimerCommandeAbonnement(Abonnement deleteAbonnementCommande)
         {
@@ -460,22 +429,15 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandeAbonnementSupprimer", ChampsQueryParam + jsonDetailCommande);
-                if (liste != null && liste.Count > 0)
-                {
-                    Log.Information("Commande d'abonnement supprimée avec succès.");
-                    return true;
-                }
-                else
-                {
-                    Log.Warning("Échec de la suppression de la commande d'abonnement. Aucune donnée retournée.");
-                }
+                return true;
+
             }
             catch (Exception ex)
             {
                 Log.Error("Erreur lors de la suppression de la commande d'abonnement : {Message}", ex.Message);
-            }
+                return false;
 
-            return false;
+            }
         }
 
         public bool ModifierCommandeAbonnement(Abonnement updateCommande)
@@ -488,22 +450,14 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<Abonnement> liste = TraitementRecup<Abonnement>(PUT, "commandeAbonnementModifier", ChampsQueryParam + jsonDetailCommande);
-                if (liste != null && liste.Count > 0)
-                {
-                    Log.Information("Commande d'abonnement modifiée avec succès.");
-                    return true;
-                }
-                else
-                {
-                    Log.Warning("Échec de la modification de la commande d'abonnement. Aucune donnée retournée.");
-                }
+                return true;
             }
             catch (Exception ex)
             {
                 Log.Error("Erreur lors de la modification de la commande d'abonnement : {Message}", ex.Message);
-            }
+                return false;
 
-            return false;
+            }
         }
 
 

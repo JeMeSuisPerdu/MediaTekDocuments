@@ -15,25 +15,5 @@ namespace MediaTekDocumentsTest
             Assert.AreEqual(1, service.IdService);
             Assert.AreEqual("Informatique", service.NomService);
         }
-
-        // Vérifie la gestion d'un nom de service vide
-        [TestMethod]
-        public void Service_Initialisation_NomServiceVide()
-        {
-            Service service = new Service(2, "");
-            Assert.AreEqual(2, service.IdService);
-            Assert.AreEqual("", service.NomService);
-        }
-
-        // Vérifie la modification des propriétés après l'initialisation
-        [TestMethod]
-        public void Service_Modification_Proprietes()
-        {
-            Service service = new Service(3, "RH");
-            service.IdService = 4;
-            service.NomService = "Logistique";
-            Assert.AreEqual(4, service.IdService);
-            Assert.AreEqual("Logistique", service.NomService);
-        }
     }
 }

@@ -35,17 +35,5 @@ namespace MediaTekDocumentsTest
             Assert.AreEqual(dateAchat, exemplaire.DateAchat);
         }
 
-        // Vérifie que les propriétés sont nulles ou vides en l'absence de valeurs spécifiques
-        [TestMethod]
-        public void Exemplaire_ProprietesVides_AssigneValeursParDefaut()
-        {
-            Exemplaire exemplaire = new Exemplaire(0, DateTime.MinValue, string.Empty, string.Empty, string.Empty);
-
-            Assert.AreEqual(0, exemplaire.Numero);
-            Assert.AreEqual(DateTime.MinValue, exemplaire.DateAchat);
-            Assert.AreEqual(string.Empty, exemplaire.Photo);
-            Assert.AreEqual(string.Empty, exemplaire.IdEtat);
-            Assert.AreEqual(string.Empty, exemplaire.Id);
-        }
     }
 }

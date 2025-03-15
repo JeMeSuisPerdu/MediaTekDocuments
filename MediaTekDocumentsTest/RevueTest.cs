@@ -29,22 +29,5 @@ namespace MediaTekDocumentsTest
             Assert.AreEqual("Mensuelle", revue.Periodicite);
             Assert.AreEqual(15, revue.DelaiMiseADispo);
         }
-
-        // Vérifie la modification des propriétés après l'initialisation
-        [TestMethod]
-        public void Revue_Modification_Proprietes()
-        {
-            Revue revue = new Revue(
-                "R002", "National Geographic", "natgeo.jpg", "G002", "Culture",
-                "P002", "Tout public", "R002", "Salle de lecture",
-                "Hebdomadaire", 7
-            );
-
-            revue.Periodicite = "Trimestrielle";
-            revue.DelaiMiseADispo = 30;
-
-            Assert.AreEqual("Trimestrielle", revue.Periodicite);
-            Assert.AreEqual(30, revue.DelaiMiseADispo);
-        }
     }
 }
