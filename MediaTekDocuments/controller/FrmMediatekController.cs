@@ -158,25 +158,44 @@ namespace MediaTekDocuments.controller
         /// <summary>
         /// Récupère les abonnements d'une revue
         /// </summary>
-        /// <param name="idLivre">id du livre concernée</param>
+        /// <param name="idRevue">id de la revue concernée</param>
         /// <returns></returns>
         public List<Abonnement> GetCommandesAbonnement(string idRevue)
         {
             return access.GetCommandesAbonnement(idRevue);
         }
+        /// <summary>
+        /// Créer le détail d'une commande abonnement
+        /// </summary>
+        /// <param name="detailsCommande"></param>
+        /// <returns></returns>
         public bool CreerCommandeAbonnement(Abonnement detailsCommande)
         {
             return access.CreerCommandeAbonnement(detailsCommande);
         }
+        /// <summary>
+        /// Supprimer le détail d'une commande abonnement
+        /// </summary>
+        /// <param name="detailsCommande"></param>
+        /// <returns></returns>
         public bool SupprimerCommandeAbonnement(Abonnement detailsCommande)
         {
             return access.SupprimerCommandeAbonnement(detailsCommande);
         }
-
+        /// <summary>
+        /// Modfier le détail d'une commande abonnement
+        /// </summary>
+        /// <param name="detailsCommande"></param>
+        /// <returns></returns>
         public bool ModifierCommandeAbonnement(Abonnement detailsCommande)
         {
             return access.ModifierCommandeAbonnement(detailsCommande);
         }
+        /// <summary>
+        /// Récupérer la liste des abonnements qui se termines dans les 30 jours
+        /// </summary>
+        /// <param name="idAbo"></param>
+        /// <returns></returns>
         public List<FinAbonnement30Jours> GetListeFinAbonnement(string idAbo)
         {
             return access.GetListeFinAbonnement(idAbo);
@@ -184,6 +203,11 @@ namespace MediaTekDocuments.controller
         #endregion
 
         #region Utilisateur
+        /// <summary>
+        /// Récupérer la liste des utilisateurs
+        /// </summary>
+        /// <param name="infoUser"></param>
+        /// <returns></returns>
         public List<Utilisateur> GetUserInfo(Utilisateur infoUser)
         {
             return access.GetUserInfo(infoUser);

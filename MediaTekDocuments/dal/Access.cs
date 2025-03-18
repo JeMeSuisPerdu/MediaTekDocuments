@@ -10,6 +10,13 @@ using System.Linq;
 using Serilog;
 namespace MediaTekDocuments.dal
 {
+
+    /// <summary>
+    /// Espace de noms contenant les classes d'accès aux données pour l'application MediaTekDocuments.
+    /// </summary>
+    internal class NamespaceDoc
+    {
+    }
     /// <summary>
     /// Classe d'accès aux données
     /// </summary>
@@ -73,7 +80,10 @@ namespace MediaTekDocuments.dal
             }
         }
 
-        // Initialisation des logs UNE SEULE FOIS
+        /// <summary>
+        /// Constructeur static de la classe Access qui initialise les logs une seule fois
+        /// </summary>
+        ///
         static Access()
         {
             Log.Logger = new LoggerConfiguration()
@@ -320,7 +330,11 @@ namespace MediaTekDocuments.dal
             return lesCommandesLivres;
         }
 
-
+        /// <summary>
+        /// Créer une commande de Livre / Dvd 
+        /// </summary>
+        /// <param name="insertCommande"></param>
+        /// <returns></returns>
         public bool CreerCommandeDocument(CommandeDocument insertCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(insertCommande, new CustomDateTimeConverter());
@@ -340,6 +354,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        /// Modifie une commande de Livre / Dvd 
+        /// </summary>
+        /// <param name="updateCommande"></param>
+        /// <returns></returns>
         public bool ModifierCommandeDocument(CommandeDocument updateCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(updateCommande, new CustomDateTimeConverter());
@@ -360,6 +379,12 @@ namespace MediaTekDocuments.dal
 
             }
         }
+
+        /// <summary>
+        /// Supprime une commande de Livre / Dvd 
+        /// </summary>
+        /// <param name="deleteCommande"></param>
+        /// <returns></returns>
         public bool SupprimerCommandeDocument(CommandeDocument deleteCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(deleteCommande, new CustomDateTimeConverter());
@@ -379,6 +404,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        /// Récupère la liste de commande d'abonnements présents dans la BDD 
+        /// </summary>
+        /// <param name="idRevue"></param>
+        /// <returns></returns>
         public List<Abonnement> GetCommandesAbonnement(string idRevue)
         {
             Log.Information("Tentative de récupération des commandes pour l'abonnement avec l'ID revue : {IdRevue} ", idRevue);
@@ -397,7 +427,11 @@ namespace MediaTekDocuments.dal
 
             return lesCommandesAbonnement;
         }
-
+        /// <summary>
+        /// Créer une commande d'abonnement (revues)
+        /// </summary>
+        /// <param name="insertAbonnementCommande"></param>
+        /// <returns></returns>
         public bool CreerCommandeAbonnement(Abonnement insertAbonnementCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(insertAbonnementCommande, new CustomDateTimeConverter());
@@ -417,8 +451,11 @@ namespace MediaTekDocuments.dal
                 return false; // Retourner false si une exception se produit
             }
         }
-
-
+        /// <summary>
+        /// Supprime une commande d'abonnement (revues)
+        /// </summary>
+        /// <param name="deleteAbonnementCommande"></param>
+        /// <returns></returns>
         public bool SupprimerCommandeAbonnement(Abonnement deleteAbonnementCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(deleteAbonnementCommande, new CustomDateTimeConverter());
@@ -439,7 +476,11 @@ namespace MediaTekDocuments.dal
 
             }
         }
-
+        /// <summary>
+        /// Modifie une commande d'abonnement (revues)
+        /// </summary>
+        /// <param name="updateCommande"></param>
+        /// <returns></returns>
         public bool ModifierCommandeAbonnement(Abonnement updateCommande)
         {
             string jsonDetailCommande = JsonConvert.SerializeObject(updateCommande, new CustomDateTimeConverter());
@@ -459,8 +500,11 @@ namespace MediaTekDocuments.dal
 
             }
         }
-
-
+        /// <summary>
+        /// Récupère la liste des abonnements dont la fin arrive bientôt 
+        /// </summary>
+        /// <param name="idRevue"></param>
+        /// <returns></returns>
         public List<FinAbonnement30Jours> GetListeFinAbonnement(string idAbonnement)
         {
             String jsonIdDocument = convertToJson("idAbo", idAbonnement);
@@ -480,7 +524,11 @@ namespace MediaTekDocuments.dal
 
             return laListeFinAbonnement;
         }
-
+        /// <summary>
+        /// Récupère la liste des utilisateurs dans la base de données
+        /// </summary>
+        /// <param name="idRevue"></param>
+        /// <returns></returns>
         public List<Utilisateur> GetUserInfo(Utilisateur utilisateur)
         {
             string jsonUtilisateur = JsonConvert.SerializeObject(utilisateur);
