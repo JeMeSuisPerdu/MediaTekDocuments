@@ -26,32 +26,38 @@ namespace MediaTekDocuments.manager
         /// Constructeur privé pour préparer la connexion (éventuellement sécurisée)
         /// </summary>
         /// <param name="uriApi">adresse de l'api</param>
-        /// <param name="authenticationString">chaîne d'authentification</param>
-        private ApiRest(String uriApi, String authenticationString="")
+        /// <param name="username">chaîne d'authentification</param>
+        /// <param name="password">chaîne d'authentification</param>
+
+        private ApiRest(String uriApi, String username, String password)
         {
             httpClient = new HttpClient() { BaseAddress = new Uri(uriApi) };
-            // prise en compte dans l'url de l'authentificaiton (basic authorization), si elle n'est pas vide
-            if (!String.IsNullOrEmpty(authenticationString))
+
+            // Ajout des en-têtes X-Auth-User et X-Auth-Pass pour l'authentification
+            if (!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password))
             {
-                String base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + base64EncodedAuthenticationString);
+                httpClient.DefaultRequestHeaders.Add("X-Auth-User", username);
+                httpClient.DefaultRequestHeaders.Add("X-Auth-Pass", password);
             }
         }
+
 
         /// <summary>
         /// Crée une instance unique de la classe
         /// </summary>
         /// <param name="uriApi">adresse de l'api</param>
-        /// <param name="authenticationString">chaîne d'authentificatio (login:pwd)</param>
+        /// <param name="username">chaîne d'authentificatio (login)</param>
+        /// <param name="password">chaîne d'authentificatio (pwd)</param>
         /// <returns></returns>
-        public static ApiRest GetInstance(String uriApi, String authenticationString)
+        public static ApiRest GetInstance(String uriApi, String username, String password)
         {
-            if(instance == null)
+            if (instance == null)
             {
-                instance = new ApiRest(uriApi, authenticationString);
+                instance = new ApiRest(uriApi, username, password);
             }
             return instance;
         }
+
 
         /// <summary>
         /// Envoi une demande à l'API et récupère la réponse

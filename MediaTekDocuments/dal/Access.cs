@@ -69,8 +69,8 @@ namespace MediaTekDocuments.dal
                     throw new ConfigurationErrorsException("Le mot de passe de l'API est manquant dans le fichier de configuration.");
                 }
 
-                string authenticationString = $"{username}:{password}";
-                api = ApiRest.GetInstance(uriApi, authenticationString);
+                api = ApiRest.GetInstance(uriApi, username, password);
+
 
             }
             catch (Exception e)
