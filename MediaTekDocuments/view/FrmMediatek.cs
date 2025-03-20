@@ -1361,6 +1361,7 @@ namespace MediaTekDocuments.view
             dtpLivresComDateCommande.Enabled = true;
             txbLivresComNbExemplaires.ReadOnly = false;
             txbLivresComNumLivre.Visible = true;
+            txbLivresComNumLivre.ReadOnly = true;
             labelEtatCmdLivre.Visible = false;
             cbxLivresComEtat.Visible = false;
             labelNumCmdLivre.Visible = true;
@@ -1376,7 +1377,7 @@ namespace MediaTekDocuments.view
             dtpLivresComDateCommande.Value = DateTime.Now;
             txbLivresComMontant.Text = "";
             txbLivresComNbExemplaires.Text = "";
-            txbLivresComNumLivre.Text = "";
+            txbLivresComNumLivre.ReadOnly = true;
         }
         /// <summary>
         /// Modifie la visibilité de deux boutons pour les rendre invisibles si true, et visibles si falses.
@@ -1411,7 +1412,7 @@ namespace MediaTekDocuments.view
                 dtpLivresComDateCommande.Value = commande.DateCommande;
                 txbLivresComMontant.Text = commande.Montant.ToString("F2");
                 txbLivresComNbExemplaires.Text = commande.NbExemplaire.ToString();
-                txbLivresComNumLivre.Text = commande.IdLivreDvd;
+
 
                 // nettoyer les éléments existants dans le ComboBox
                 cbxLivresComEtat.Items.Clear();
@@ -1710,9 +1711,10 @@ namespace MediaTekDocuments.view
                 // Utilise la méthode du contrôleur pour récupérer les commandes associées au livre sélectionné
                 List<CommandeDocument> commandesAssociees = controller.GetCommandesLivres(livreSelectionne.Id);
                 lesCommandesDocument = controller.GetCommandesLivres(livreSelectionne.Id);
-
                 // Remplir la DataGridView avec les commandes récupérées
                 RemplirCmdLivresCommandes(commandesAssociees);
+                txbLivresComNumLivre.Text = livreSelectionne.Id.ToString();
+
             }
         }
         /// <summary>
@@ -1765,9 +1767,16 @@ namespace MediaTekDocuments.view
         private void btnLivresComSupprimer_Click(object sender, EventArgs e)
         {
             Mode = Suppression;
+            Suivi suiviSelectionne = (Suivi)cbxLivresComEtat.SelectedItem;
             if (!VerifierSelection(dgvLivresComListeCom))
             {
                 Mode = "";
+            }
+            // Vérifie si l'ID de suivi est 2 (livré)
+            if (suiviSelectionne != null && suiviSelectionne.Id == 2)
+            {
+                // Affiche une boîte de dialogue avec le message d'erreur
+                MessageBox.Show("Impossible de supprimer une commande de Livres déjà livrée.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -2052,6 +2061,7 @@ namespace MediaTekDocuments.view
             dtpDvdComDateCommande.Enabled = true;
             txbDvdComNbExemplaires.ReadOnly = false;
             txbComNumDvd.Visible = true;
+            txbComNumDvd.ReadOnly = true;
             labelEtatCmdDvd.Visible = false;
             cbxDvdComEtat.Visible = false;
             labelNumCmdDvd.Visible = true;
@@ -2075,7 +2085,7 @@ namespace MediaTekDocuments.view
             dtpDvdComDateCommande.Value = DateTime.Now;
             txbDvdComMontant.Text = "";
             txbDvdComNbExemplaires.Text = "";
-            txbComNumDvd.Text = "";
+            txbComNumDvd.ReadOnly = true;
         }
         /// <summary>
         /// vide les zones de recherche et de filtre
@@ -2137,7 +2147,6 @@ namespace MediaTekDocuments.view
                 dtpDvdComDateCommande.Value = commande.DateCommande;
                 txbDvdComMontant.Text = commande.Montant.ToString("F2");
                 txbDvdComNbExemplaires.Text = commande.NbExemplaire.ToString();
-                txbComNumDvd.Text = commande.IdLivreDvd;
 
                 // nettoyer les éléments existants dans le ComboBox
                 cbxDvdComEtat.Items.Clear();
@@ -2375,6 +2384,7 @@ namespace MediaTekDocuments.view
                 lesCommandesDocument = controller.GetCommandesLivres(dvdSelectionne.Id);
                 // Remplir la DataGridView avec les commandes récupérées
                 RemplirCmdDvdCommandes(commandesAssociees);
+                txbComNumDvd.Text = dvdSelectionne.Id.ToString();
             }
         }
         /// <summary>
@@ -2514,9 +2524,16 @@ namespace MediaTekDocuments.view
         private void btnDvdComSupprimer_Click(object sender, EventArgs e)
         {
             Mode = Suppression;
+            Suivi suiviSelectionne = (Suivi)cbxDvdComEtat.SelectedItem;
             if (!VerifierSelection(dgvDvdComListeCom))
             {
                 Mode = "";
+            }
+            // Vérifie si l'ID de suivi est 2 (livré)
+            if (suiviSelectionne != null && suiviSelectionne.Id == 2)
+            {
+                // Affiche une boîte de dialogue avec le message d'erreur
+                MessageBox.Show("Impossible de supprimer une commande de DVD déjà livrée.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -2748,7 +2765,7 @@ namespace MediaTekDocuments.view
             dtpAbonnementComDateCommande.Value = DateTime.Now;
             txbAbonnementComMontant.Text = "";
             dtpFinAbonnementDateCommande.Value = DateTime.Now;
-            txbComNumRevue.Text = "";
+            txbComNumRevue.ReadOnly = true;
         }
         /// <summary>
         /// Gére l'affichage des infos d'une commande dans les datagridview
@@ -2763,7 +2780,6 @@ namespace MediaTekDocuments.view
                 dtpAbonnementComDateCommande.Value = commande.DateCommande;
                 txbAbonnementComMontant.Text = commande.Montant.ToString("F2");
                 dtpFinAbonnementDateCommande.Value = (DateTime)commande.DateFinAbonnement;
-                txbComNumRevue.Text = commande.IdRevue;
             }
 
             else
@@ -2807,7 +2823,7 @@ namespace MediaTekDocuments.view
             txbAbonnementComMontant.ReadOnly = false;
             dtpAbonnementComDateCommande.Enabled = true;
             dtpFinAbonnementDateCommande.Enabled = true;
-            txbComNumRevue.ReadOnly = false;
+            txbComNumRevue.ReadOnly = true;
             btnAbonnementComValider.Visible = true;
             btnAbonnementComAnnuler.Visible = true;
         }
@@ -2990,6 +3006,8 @@ namespace MediaTekDocuments.view
                 lesAbonnements = controller.GetCommandesAbonnement(revueSelectionne.Id);
                 // Remplir la DataGridView avec les commandes récupérées
                 RemplirCmdAbonnementCommandes(commandesAssociees);
+                txbComNumRevue.Text = revueSelectionne.Id.ToString();
+
             }
         }
         /// <summary>
