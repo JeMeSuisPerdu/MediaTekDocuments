@@ -39,23 +39,27 @@ namespace MediaTekDocuments.view
             // 
             // txbIdentifiantUser
             // 
-            this.txbIdentifiantUser.Location = new System.Drawing.Point(58, 101);
+            this.txbIdentifiantUser.Location = new System.Drawing.Point(77, 124);
+            this.txbIdentifiantUser.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txbIdentifiantUser.Name = "txbIdentifiantUser";
-            this.txbIdentifiantUser.Size = new System.Drawing.Size(303, 20);
+            this.txbIdentifiantUser.Size = new System.Drawing.Size(403, 22);
             this.txbIdentifiantUser.TabIndex = 0;
             // 
             // txbMotDePasseUser
             // 
-            this.txbMotDePasseUser.Location = new System.Drawing.Point(58, 167);
+            this.txbMotDePasseUser.Location = new System.Drawing.Point(77, 206);
+            this.txbMotDePasseUser.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txbMotDePasseUser.Name = "txbMotDePasseUser";
-            this.txbMotDePasseUser.Size = new System.Drawing.Size(303, 20);
+            this.txbMotDePasseUser.PasswordChar = '*';
+            this.txbMotDePasseUser.Size = new System.Drawing.Size(403, 22);
             this.txbMotDePasseUser.TabIndex = 1;
             // 
             // btnConnexion
             // 
-            this.btnConnexion.Location = new System.Drawing.Point(130, 205);
+            this.btnConnexion.Location = new System.Drawing.Point(173, 252);
+            this.btnConnexion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnConnexion.Name = "btnConnexion";
-            this.btnConnexion.Size = new System.Drawing.Size(143, 38);
+            this.btnConnexion.Size = new System.Drawing.Size(191, 47);
             this.btnConnexion.TabIndex = 2;
             this.btnConnexion.Text = "Connexion";
             this.btnConnexion.UseVisualStyleBackColor = true;
@@ -65,41 +69,45 @@ namespace MediaTekDocuments.view
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI Symbol", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(129, 22);
+            this.label1.Location = new System.Drawing.Point(172, 27);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(144, 37);
+            this.label1.Size = new System.Drawing.Size(180, 46);
             this.label1.TabIndex = 3;
             this.label1.Text = "Connexion";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(55, 71);
+            this.label2.Location = new System.Drawing.Point(73, 87);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.Size = new System.Drawing.Size(69, 17);
             this.label2.TabIndex = 4;
             this.label2.Text = "Identifiant";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(55, 141);
+            this.label3.Location = new System.Drawing.Point(73, 174);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.Size = new System.Drawing.Size(88, 17);
             this.label3.TabIndex = 5;
             this.label3.Text = "MotDePasse";
             // 
             // AuthForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(415, 271);
+            this.ClientSize = new System.Drawing.Size(553, 334);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnConnexion);
             this.Controls.Add(this.txbMotDePasseUser);
             this.Controls.Add(this.txbIdentifiantUser);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "AuthForm";
             this.Text = "AuthForm";
             this.ResumeLayout(false);
