@@ -64,14 +64,17 @@ Ajout d'une règle dans le fichier .htaccess pour retourner une erreur 400 en ca
 
 ### Récupération de l'Application et de l'API
 <br>
+
 #### Où télécharger l'application ?
 <br>
 L'application peut être récupérée sur le dépôt suivant :<br> 
 https://github.com/JeMeSuisPerdu/MediaTekDocuments <br>
+
 #### Installation et exécution de l'application
 <br>Une fois l'application téléchargée, exécutez le fichier MediatekDocument.msi pour l'installer.<br>
 L'exécutable sera installé dans le dossier de débogage de l'application.<br>
 Voici le chemin : MediaTekDocuments\MediaTekDocumentsSetup\Release<br>
+
 #### API en ligne et récupération en local
 <br>
 L'API est configurée pour être utilisée directement par l'application.
