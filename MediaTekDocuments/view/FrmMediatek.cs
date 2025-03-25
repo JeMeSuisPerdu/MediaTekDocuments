@@ -1522,6 +1522,19 @@ namespace MediaTekDocuments.view
         {
             combobox.Items.Clear();
 
+            // Ajouter l'état actuel pour qu'il puisse être sélectionné
+            string etatActuelLibelle = "";
+            if (etatActuel == 1) etatActuelLibelle = "En cours";
+            else if (etatActuel == 2) etatActuelLibelle = "Livrée";
+            else if (etatActuel == 3) etatActuelLibelle = "Réglée";
+            else if (etatActuel == 4) etatActuelLibelle = "Relancée";
+            else if (etatActuel == 5) etatActuelLibelle = "Annulée";
+
+            if (!string.IsNullOrEmpty(etatActuelLibelle))
+            {
+                combobox.Items.Add(new Suivi(etatActuel, etatActuelLibelle));
+            }
+
             switch (etatActuel)
             {
                 case 1: // En cours
@@ -1545,21 +1558,25 @@ namespace MediaTekDocuments.view
                     break;
 
                 case 5: // Annulée
-                    // Une commande annulée ne peut pas changer d'état.
                     MessageBox.Show("Une commande annulée ne peut pas changer d'état.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    break;
+                    return;
 
                 default:
                     MessageBox.Show("État inconnu.", Erreur, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
+                    return;
             }
 
-            // Sélectionner automatiquement la première option si disponible
-            if (combobox.Items.Count > 0)
+            // Sélectionner automatiquement l'état actuel si présent
+            foreach (Suivi item in combobox.Items)
             {
-                combobox.SelectedIndex = 0;
+                if (item.Id == etatActuel)
+                {
+                    combobox.SelectedItem = item;
+                    break;
+                }
             }
         }
+
         /// <summary>
         /// Affiche ou non le label sur les opérations CRUD
         /// </summary>

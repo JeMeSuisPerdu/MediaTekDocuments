@@ -364,7 +364,7 @@ namespace MediaTekDocuments.view
             this.groupBox5.Size = new System.Drawing.Size(1247, 395);
             this.groupBox5.TabIndex = 22;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Commandes concernant le livre sélectionné";
+            this.groupBox5.Text = "Commandes concernant l\'abonnement sélectionné";
             // 
             // groupBoxCommandeAbonnement
             // 
@@ -791,7 +791,7 @@ namespace MediaTekDocuments.view
             this.groupBox3.Size = new System.Drawing.Size(1247, 400);
             this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Commandes concernant le livre sélectionné";
+            this.groupBox3.Text = "Commandes concernant le dvd sélectionné";
             // 
             // groupBoxInfoCommandeDvd
             // 
